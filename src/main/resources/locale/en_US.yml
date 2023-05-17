@@ -28,8 +28,6 @@ command-help-wiki-hover: '&7%url%'
 command-reload-description: 'Reloads the plugin'
 command-reload-reloaded: '&eConfiguration and locale files were reloaded.'
 
-# Hello Command
-command-hello-description: 'Say hello to someone.'
-
 # Argument Handler Error Messages
-argument-handler-material: 'Material [%input%] does not exist'
+argument-handler-mine: 'The mine [%input%] does not exist, Are you sure you typed it correctly?'
+argument-handler-position: 'Position [%input%] is not a valid position. Please type [FIRST/SECOND]'
