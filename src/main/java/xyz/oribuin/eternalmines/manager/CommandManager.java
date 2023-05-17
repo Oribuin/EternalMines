@@ -1,10 +1,10 @@
-package dev.rosewood.myplugin.manager;
+package xyz.oribuin.eternalmines.manager;
 
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.command.framework.RoseCommandWrapper;
 import dev.rosewood.rosegarden.manager.AbstractCommandManager;
+import xyz.oribuin.eternalmines.command.MinesCommandWrapper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CommandManager extends AbstractCommandManager {
@@ -15,12 +15,12 @@ public class CommandManager extends AbstractCommandManager {
 
     @Override
     public List<Class<? extends RoseCommandWrapper>> getRootCommands() {
-        return new ArrayList<>();
+        return List.of(MinesCommandWrapper.class);
     }
 
     @Override
     public List<String> getArgumentHandlerPackages() {
-        return List.of("dev.rosewood.myplugin.command.argument");
+        return List.of("xyz.oribuin.eternalmines.command.argument");
     }
 
 }

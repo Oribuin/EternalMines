@@ -1,15 +1,15 @@
-package dev.rosewood.myplugin.manager;
+package xyz.oribuin.eternalmines.manager;
 
-import dev.rosewood.myplugin.MyPlugin;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.config.RoseSetting;
 import dev.rosewood.rosegarden.manager.AbstractConfigurationManager;
+import xyz.oribuin.eternalmines.EternalMines;
 
 public class ConfigurationManager extends AbstractConfigurationManager {
 
     public enum Setting implements RoseSetting {
-        MY_SETTINGS("my-settings", "default-value", "This is a comment.", "This is another comment.");
+        ;
 
         private final String key;
         private final Object defaultValue;
@@ -49,7 +49,7 @@ public class ConfigurationManager extends AbstractConfigurationManager {
 
         @Override
         public CommentedFileConfiguration getBaseConfig() {
-            return MyPlugin.getInstance().getManager(ConfigurationManager.class).getConfig();
+            return EternalMines.getInstance().getManager(ConfigurationManager.class).getConfig();
         }
     }
 
@@ -59,6 +59,13 @@ public class ConfigurationManager extends AbstractConfigurationManager {
 
     @Override
     protected String[] getHeader() {
-        return new String[]{};
+        return new String[]{
+                "___________ __                             .__      _____  .__                      \n",
+                "\\_   _____//  |_  ___________  ____ _____  |  |    /     \\ |__| ____   ____   ______\n",
+                " |    __)_\\   __\\/ __ \\_  __ \\/    \\\\__  \\ |  |   /  \\ /  \\|  |/    \\_/ __ \\ /  ___/\n",
+                " |        \\|  | \\  ___/|  | \\/   |  \\/ __ \\|  |__/    Y    \\  |   |  \\  ___/ \\___ \\ \n",
+                "/_______  /|__|  \\___  >__|  |___|  (____  /____/\\____|__  /__|___|  /\\___  >____  >\n",
+                "        \\/           \\/           \\/     \\/              \\/        \\/     \\/     \\/ "
+        };
     }
 }

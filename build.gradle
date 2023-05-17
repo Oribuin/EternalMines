@@ -6,8 +6,8 @@ plugins {
     id "maven-publish"
 }
 
-group = 'dev.rosewood'
-version = '1.0-SNAPSHOT'
+group = "xyz.oribuin"
+version = "1.0-SNAPSHOT"
 
 java {
     toolchain {
@@ -16,9 +16,9 @@ java {
 }
 
 compileJava {
-    options.compilerArgs += ['-parameters']
+    options.compilerArgs += ["-parameters"]
     options.fork = true
-    options.encoding = 'UTF-8'
+    options.encoding = "UTF-8"
 }
 
 repositories {
@@ -32,27 +32,42 @@ repositories {
 
 dependencies {
     api "dev.rosewood:rosegarden:${gardenVersion}"
-    api "dev.rosewood:guiframework:${guiVersion}"
 
     // Decide whether you want to use Spigot or Paper API (Paper is recommended)
     compileOnly "io.papermc.paper:paper-api:${spigotVersion}-R0.1-SNAPSHOT"
-//    compileOnly "org.spigotmc:spigot-api:${spigotVersion}-R0.1-SNAPSHOT"
+    compileOnly "org.jetbrains:annotations:23.0.0"
+
+    // Plugin Dependencies
+    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
+    compileOnly "me.clip:placeholderapi:2.11.3"
+    compileOnly "com.arcaniax:HeadDatabase-API:1.3.1", {
+        exclude group: "org.spigotmc"
+    }
+
+    // Mojang dependencies
+    compileOnly "com.mojang:authlib:1.5.21"
+
+    // Frameworks & APIs
+    api "dev.rosewood:rosegarden:${gardenVersion}"
+    api("dev.triumphteam:triumph-gui:3.1.4") {  // https://mf.mattstudios.me/triumph-gui/introduction
+        exclude group: "com.google.code.gson", module: "gson" // Remove GSON, Already included in spigot api
+        exclude group: "net.kyori", module: "*" // Remove kyori, we"re using plugin.yml libraries
+    }
 }
 
 shadowJar {
     archiveClassifier.set(null)
 
-    relocate("dev.rosewood.rosegarden", "${project.group}.myplugin.rosegarden")
+    relocate("dev.rosewood.rosegarden", "${project.group}.eternalmines.rosegarden")
 
-    // Remove comments if you're not using SQL/SQLite
-//    exclude 'dev/rosewood/rosegarden/lib/hikaricp/**/*.class'
-//    exclude 'dev/rosewood/rosegarden/lib/slf4j/**/*.class'
+    exclude "dev/rosewood/rosegarden/lib/hikaricp/**/*.class"
+    exclude "dev/rosewood/rosegarden/lib/slf4j/**/*.class"
 }
 
 // Include version replacement
 processResources {
     from(sourceSets.main.resources.srcDirs) {
-        include '**/*.yml'
+        include "**/*.yml"
         filter ReplaceTokens, tokens: ["version": project.property("version")]
         duplicatesStrategy DuplicatesStrategy.INCLUDE
     }
@@ -63,24 +78,24 @@ publishing {
     publications {
         shadow(MavenPublication) { publication ->
             project.shadow.component(publication)
-            artifactId = "myplugin"
+            artifactId = "eternalmines"
             pom {
-                name = "myplugin"
+                name = "eternalmines"
             }
         }
     }
 
     repositories {
-        if (project.hasProperty('mavenUser') && project.hasProperty('mavenPassword')) {
+        if (project.hasProperty("mavenUser") && project.hasProperty("mavenPassword")) {
             maven {
                 credentials {
                     username project.mavenUser
                     password project.mavenPassword
                 }
 
-                def releasesRepoUrl = 'https://repo.rosewooddev.io/repository/public-releases/'
-                def snapshotsRepoUrl = 'https://repo.rosewooddev.io/repository/public-snapshots/'
-                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                def releasesRepoUrl = "https://repo.rosewooddev.io/repository/public-releases/"
+                def snapshotsRepoUrl = "https://repo.rosewooddev.io/repository/public-snapshots/"
+                url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
             }
         }
     }

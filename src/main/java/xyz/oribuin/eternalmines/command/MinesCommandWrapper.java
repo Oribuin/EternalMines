@@ -1,29 +1,29 @@
-package dev.rosewood.myplugin.command;
+package xyz.oribuin.eternalmines.command;
 
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.command.framework.RoseCommandWrapper;
 
 import java.util.List;
 
-public class ExampleCommandWrapper extends RoseCommandWrapper {
+public class MinesCommandWrapper extends RoseCommandWrapper {
 
-    public ExampleCommandWrapper(RosePlugin rosePlugin) {
+    public MinesCommandWrapper(RosePlugin rosePlugin) {
         super(rosePlugin);
     }
 
     @Override
     public String getDefaultName() {
-        return "example";
+        return "mines";
     }
 
     @Override
     public List<String> getDefaultAliases() {
-        return List.of("ex");
+        return List.of("emines");
     }
 
     @Override
     public List<String> getCommandPackages() {
-        return List.of("dev.rosewood.myplugin.command.command");
+        return List.of("xyz.oribuin.eternalmines.command.command");
     }
 
     @Override
