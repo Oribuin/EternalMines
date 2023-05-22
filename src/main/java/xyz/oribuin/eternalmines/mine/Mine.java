@@ -2,12 +2,14 @@ package xyz.oribuin.eternalmines.mine;
 
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.utils.NMSUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import xyz.oribuin.eternalmines.EternalMines;
 import xyz.oribuin.eternalmines.manager.MineManager;
 import xyz.oribuin.eternalmines.util.MineUtils;
 
@@ -15,7 +17,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.Objects;
 
 public class Mine {
 
@@ -72,8 +74,9 @@ public class Mine {
         blocks.keySet().removeIf(material -> !material.isBlock());
 
         this.lastReset = System.currentTimeMillis();
+        this.region.loadBlocksInside(); // Load all the blocks inside the region
 
-        CompletableFuture.runAsync(() -> this.region.getEntitiesInside().stream()
+        this.region.getEntitiesInside().stream()
                 .filter(livingEntity -> livingEntity.getType() == EntityType.PLAYER)
                 .forEach(livingEntity -> {
                     Player player = (Player) livingEntity;
@@ -83,10 +86,11 @@ public class Mine {
                         player.teleportAsync(this.spawn);
                     else
                         player.teleport(this.spawn);
-                }));
+                });
 
-        // Fill the region with the blocks, maybe try async?
-         this.region.fill(blocks); // TODO: Optimize this potentially
+        // Fill the region with the blocks, cannot be run async due to Bukkit API
+        // TODO: Optimize this to use a cuboid region iterator
+        Bukkit.getScheduler().runTask(EternalMines.getInstance(), () -> this.region.fill(blocks));
         return true;
 
     }
@@ -97,10 +101,10 @@ public class Mine {
      * @return true if the mine should be reset
      */
     public boolean shouldReset() {
-        if (System.currentTimeMillis() - this.lastReset < this.resetTime)
-            return false;
+        if (this.calculatePercentage() <= this.resetPercentage)
+            return true;
 
-        return this.calculatePercentage() >= this.resetPercentage;
+        return System.currentTimeMillis() - this.lastReset >= this.resetTime;
     }
 
     /**
@@ -109,13 +113,22 @@ public class Mine {
      * @return the percentage of blocks mined
      */
     public double calculatePercentage() {
-        List<Block> totalBlocks = this.region.getBlocksInside();
+        List<Block> blocksInMine = this.region.getBlocks();
+        if (blocksInMine.isEmpty()) {
+            this.region.loadBlocksInside(); // Load all the blocks inside the region
+            blocksInMine.addAll(this.region.getBlocks()); // Add all the blocks to the list
+        }
 
-        if (totalBlocks.isEmpty() || totalBlocks.stream().allMatch(block -> block.getType().isAir()))
+        int airBlocks = (int) blocksInMine.stream().filter(block -> block == null || block.getType().isAir()).count();
+
+        if (blocksInMine.isEmpty() || airBlocks == blocksInMine.size()) {
             return 0.0;
+        }
 
-        double minedBlocks = totalBlocks.stream().filter(block -> !block.getType().isAir()).count();
-        return minedBlocks / totalBlocks.size();
+        int totalBlocks = this.region.getTotalBlocks();
+        int blocksLeft = totalBlocks - airBlocks;
+
+        return Math.round(((double) blocksLeft / totalBlocks) * 100.0);
     }
 
     public @NotNull String getId() {

@@ -214,6 +214,21 @@ public class MineManager extends Manager {
         return this.cachedMines.get(name);
     }
 
+    /**
+     * Get a mine by its location
+     *
+     * @param mine The location of the mine
+     * @return The mine
+     */
+    public @Nullable Mine getMine(@NotNull Location mine) {
+        for (Mine m : this.cachedMines.values()) {
+            if (m.getRegion().isInside(mine)) {
+                return m;
+            }
+        }
+        return null;
+    }
+
     @Override
     public void disable() {
         this.cachedMines.clear();

@@ -1,8 +1,8 @@
 # Mine Settings
 mine-settings:
   id: 'example'
-  reset-percentage: 0.20 # Reset mine once 20% of blocks are mined
-  reset-delay: 192000 # Delay in seconds before mine resets automatically
+  reset-percentage: 20 # Reset mine once 20% of blocks are mined
+  reset-delay: 300 # Delay in seconds before mine resets automatically
   spawn:
     world: world
     x: 0

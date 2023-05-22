@@ -3,7 +3,6 @@ package xyz.oribuin.eternalmines.mine;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -17,10 +16,13 @@ public class Region {
 
     private @Nullable Location pos1; // First position of the region
     private @Nullable Location pos2; // Second position of the region
+    private int totalBlocks; // Total blocks in the region
+    private List<Block> blocks;
 
     public Region(@Nullable Location pos1, @Nullable Location pos2) {
         this.pos1 = pos1;
         this.pos2 = pos2;
+        this.blocks = new ArrayList<>();
     }
 
     public Region() {
@@ -36,46 +38,36 @@ public class Region {
         if (this.pos1 == null || this.pos2 == null)
             return;
 
-        int minX = Math.min(pos1.getBlockX(), pos2.getBlockX());
-        int minY = Math.min(pos1.getBlockY(), pos2.getBlockY());
-        int minZ = Math.min(pos1.getBlockZ(), pos2.getBlockZ());
-        int maxX = Math.max(pos1.getBlockX(), pos2.getBlockX());
-        int maxY = Math.max(pos1.getBlockY(), pos2.getBlockY());
-        int maxZ = Math.max(pos1.getBlockZ(), pos2.getBlockZ());
-
         // Check if the blocks map is empty or if all the blocks are air
         boolean onlyAir = blocks.isEmpty() || blocks.keySet().stream()
                 .allMatch(material -> material == Material.AIR);
 
-        World world = pos1.getWorld();
+        if (onlyAir) {
+            this.blocks.forEach(block -> block.setBlockData(Material.AIR.createBlockData()));
+            this.loadBlocksInside();
+            return;
+        }
 
-        for (int x = minX; x <= maxX; x++) {
-            for (int y = minY; y <= maxY; y++) {
-                for (int z = minZ; z <= maxZ; z++) {
-                    if (onlyAir) {
-                        world.setBlockData(x, y, z, Material.AIR.createBlockData());
-                        continue;
-                    }
+        this.blocks.forEach(block -> {
+            double totalWeight = blocks.values().stream().mapToDouble(Double::doubleValue).sum();
+            double random = Math.random() * totalWeight;
+            double weightSum = 0;
 
-                    double totalWeight = blocks.values().stream().mapToDouble(Double::doubleValue).sum();
-                    double random = Math.random() * totalWeight;
-                    double weightSum = 0;
-
-                    for (Map.Entry<Material, Double> entry : blocks.entrySet()) {
-                        weightSum += entry.getValue();
-                        if (random <= weightSum) {
-                            world.setBlockData(x, y, z, entry.getKey().createBlockData());
-                            break;
-                        }
-                    }
+            for (Map.Entry<Material, Double> entry : blocks.entrySet()) {
+                weightSum += entry.getValue();
+                if (random <= weightSum) {
+                    block.setType(entry.getKey());
+                    break;
                 }
             }
-        }
+        });
+
+        this.loadBlocksInside(); // Update the blocks inside the region
     }
 
-    public List<Block> getBlocksInside() {
+    public void loadBlocksInside() {
         if (pos1 == null || pos2 == null)
-            return new ArrayList<>();
+            return;
 
         List<Block> blocks = new ArrayList<>();
         int minX = Math.min(pos1.getBlockX(), pos2.getBlockX());
@@ -94,7 +86,8 @@ public class Region {
             }
         }
 
-        return blocks;
+        this.blocks = blocks; // Set the blocks to the region
+        this.totalBlocks = blocks.size(); // Set the total blocks in the region
     }
 
     /**
@@ -144,11 +137,11 @@ public class Region {
      */
     public boolean isInside(Location location) {
         // Check if the position is null
-        if (pos1 == null || pos2 == null)
+        if (this.pos1 == null || this.pos2 == null)
             return false;
 
         // Check if the location is inside the world of the region
-        if (location.getWorld() != pos1.getWorld() || location.getWorld() != pos2.getWorld())
+        if (location.getWorld() != this.pos1.getWorld() || location.getWorld() != this.pos2.getWorld())
             return false;
 
         // Declare location x, y, z
@@ -157,13 +150,13 @@ public class Region {
         int z = location.getBlockZ();
 
         // Check if the location is inside the region
-        return x >= Math.min(pos1.getX(), pos2.getX()) && x <= Math.max(pos1.getX(), pos2.getX()) &&
-                y >= Math.min(pos1.getY(), pos2.getY()) && y <= Math.max(pos1.getY(), pos2.getY()) &&
-                z >= Math.min(pos1.getZ(), pos2.getZ()) && z <= Math.max(pos1.getZ(), pos2.getZ());
+        return x >= Math.min(this.pos1.getX(), this.pos2.getX()) && x <= Math.max(this.pos1.getX(), this.pos2.getX()) &&
+                y >= Math.min(this.pos1.getY(), this.pos2.getY()) && y <= Math.max(this.pos1.getY(), this.pos2.getY()) &&
+                z >= Math.min(this.pos1.getZ(), this.pos2.getZ()) && z <= Math.max(this.pos1.getZ(), this.pos2.getZ());
     }
 
     public @Nullable Location getPos1() {
-        return pos1;
+        return this.pos1;
     }
 
     public void setPos1(@Nullable Location pos1) {
@@ -171,11 +164,18 @@ public class Region {
     }
 
     public @Nullable Location getPos2() {
-        return pos2;
+        return this.pos2;
     }
 
     public void setPos2(@Nullable Location pos2) {
         this.pos2 = pos2;
     }
 
+    public List<Block> getBlocks() {
+        return this.blocks;
+    }
+
+    public int getTotalBlocks() {
+        return this.totalBlocks;
+    }
 }
