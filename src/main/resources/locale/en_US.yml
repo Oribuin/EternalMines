@@ -28,6 +28,27 @@ command-help-wiki-hover: '&7%url%'
 command-reload-description: 'Reloads the plugin'
 command-reload-reloaded: '&eConfiguration and locale files were reloaded.'
 
+# Create Command
+command-create-description: 'Create a new mine'
+command-create-success: 'You have created the mine [%mine%]'
+command-create-already-exists: 'The mine you have tried to create already exists.'
+
+# Region Command
+command-region-description: 'Set the region for a mine'
+command-region-success: 'You have set the region for the mine [%mine%]'
+
+# Reset Command
+command-reset-description: 'Reset a mine'
+command-reset-success: 'You have reset the mine [%mine%]'
+command-reset-failed: 'We were unable to reset the mine [%mine%], Are the mine regions set correctly?'
+
+command-teleport-description: 'Teleport to a mine'
+command-teleport-success: 'You have teleported to the mine [%mine%]'
+command-teleport-failed: 'We were unable to teleport you to the mine, Are the chunks loaded?'
+
 # Argument Handler Error Messages
 argument-handler-mine: 'The mine [%input%] does not exist, Are you sure you typed it correctly?'
 argument-handler-position: 'Position [%input%] is not a valid position. Please type [FIRST/SECOND]'
+argument-handler-world: 'The world [%input%] does not exist, Are you sure you typed it correctly?'
+
+

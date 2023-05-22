@@ -33,22 +33,22 @@ public class ResetCommand extends RoseCommand {
 
     @Override
     protected String getDefaultName() {
-        return "teleport";
+        return "reset";
     }
 
     @Override
     protected List<String> getDefaultAliases() {
-        return List.of("tp");
+        return List.of("restart");
     }
 
     @Override
     public String getDescriptionKey() {
-        return "command-teleport-description";
+        return "command-reset-description";
     }
 
     @Override
     public String getRequiredPermission() {
-        return "eternalmines.command.teleport";
+        return "eternalmines.command.reset";
     }
 
 }

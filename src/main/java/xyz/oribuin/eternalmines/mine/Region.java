@@ -4,6 +4,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
@@ -70,7 +71,30 @@ public class Region {
                 }
             }
         }
+    }
 
+    public List<Block> getBlocksInside() {
+        if (pos1 == null || pos2 == null)
+            return new ArrayList<>();
+
+        List<Block> blocks = new ArrayList<>();
+        int minX = Math.min(pos1.getBlockX(), pos2.getBlockX());
+        int minY = Math.min(pos1.getBlockY(), pos2.getBlockY());
+        int minZ = Math.min(pos1.getBlockZ(), pos2.getBlockZ());
+
+        int maxX = Math.max(pos1.getBlockX(), pos2.getBlockX());
+        int maxY = Math.max(pos1.getBlockY(), pos2.getBlockY());
+        int maxZ = Math.max(pos1.getBlockZ(), pos2.getBlockZ());
+
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
+                    blocks.add(pos1.getWorld().getBlockAt(x, y, z));
+                }
+            }
+        }
+
+        return blocks;
     }
 
     /**
@@ -78,7 +102,7 @@ public class Region {
      *
      * @return A list of all the entities inside the region
      */
-    public List<LivingEntity> getInside() {
+    public List<LivingEntity> getEntitiesInside() {
         if (pos1 == null || pos2 == null)
             return new ArrayList<>();
 

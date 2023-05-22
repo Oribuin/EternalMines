@@ -4,6 +4,7 @@ import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.utils.HexUtils;
 import dev.rosewood.rosegarden.utils.NMSUtil;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -124,16 +125,6 @@ public final class MineUtils {
      */
     public static String locationAsKey(Location location) {
         return String.format("%s-%.2f-%.2f-%.2f", location.getWorld().getName(), location.getX(), location.getY(), location.getZ());
-    }
-
-    /**
-     * Format an enum name to be more readable.
-     *
-     * @param enumName The enum name
-     * @return The formatted name
-     */
-    public static String formatEnum(String enumName) {
-        return WordUtils.capitalizeFully(enumName.toLowerCase().replace("_", " "));
     }
 
     /**

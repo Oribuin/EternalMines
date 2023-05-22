@@ -1,6 +1,6 @@
-name: MyPlugin
-main: dev.rosewood.myplugin.MyPlugin
+name: EternalMines
+main: xyz.oribuin.eternalmines.EternalMines
 version: '@version@'
 api-version: '1.16'
-author: Rosewood-Development
-description: A plugin that does stuff
+author: Oribuin
+description: A simple bloat-free plugin to create prison mines.

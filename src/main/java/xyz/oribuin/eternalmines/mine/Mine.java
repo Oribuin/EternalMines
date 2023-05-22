@@ -4,14 +4,16 @@ import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.utils.NMSUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import xyz.oribuin.eternalmines.EternalMines;
+import xyz.oribuin.eternalmines.manager.MineManager;
 import xyz.oribuin.eternalmines.util.MineUtils;
-import xyz.oribuin.eternalmines.util.SchedulerUtil;
 
+import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -24,15 +26,34 @@ public class Mine {
     private double resetPercentage; // % of blocks that need to be mined to reset the mine
     private long resetTime; // (Time in milliseconds) Delay between the mine resets
     private long lastReset; // (Time in milliseconds) Last time the mine was reset
+    private File cachedFile; // Cached file of the mine
 
     public Mine(@NotNull String id, @NotNull Location spawn) {
         this.id = id;
         this.spawn = spawn;
         this.region = new Region();
-        this.blocks = new HashMap<>();
+        this.blocks = new HashMap<>() {{
+            this.put(Material.STONE, 100.0);
+        }};
         this.resetPercentage = 0.20;
         this.lastReset = System.currentTimeMillis();
         this.resetTime = 0;
+        this.cachedFile = null;
+    }
+
+    public boolean create(RosePlugin plugin) {
+        if (this.cachedFile != null && this.cachedFile.exists())
+            return false;
+
+        try {
+            this.cachedFile = MineUtils.createFile(plugin, "mines", this.id + ".yml");
+            plugin.getManager(MineManager.class).saveMine(this);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -52,7 +73,7 @@ public class Mine {
 
         this.lastReset = System.currentTimeMillis();
 
-        CompletableFuture.runAsync(() -> this.region.getInside().stream()
+        CompletableFuture.runAsync(() -> this.region.getEntitiesInside().stream()
                 .filter(livingEntity -> livingEntity.getType() == EntityType.PLAYER)
                 .forEach(livingEntity -> {
                     Player player = (Player) livingEntity;
@@ -65,9 +86,36 @@ public class Mine {
                 }));
 
         // Fill the region with the blocks, maybe try async?
-        SchedulerUtil.async(() -> this.region.fill(blocks));
+         this.region.fill(blocks); // TODO: Optimize this potentially
         return true;
 
+    }
+
+    /**
+     * Check if a mine is ready to be reset based on the reset percentage
+     *
+     * @return true if the mine should be reset
+     */
+    public boolean shouldReset() {
+        if (System.currentTimeMillis() - this.lastReset < this.resetTime)
+            return false;
+
+        return this.calculatePercentage() >= this.resetPercentage;
+    }
+
+    /**
+     * Calculate the percentage of blocks mined in the mine
+     *
+     * @return the percentage of blocks mined
+     */
+    public double calculatePercentage() {
+        List<Block> totalBlocks = this.region.getBlocksInside();
+
+        if (totalBlocks.isEmpty() || totalBlocks.stream().allMatch(block -> block.getType().isAir()))
+            return 0.0;
+
+        double minedBlocks = totalBlocks.stream().filter(block -> !block.getType().isAir()).count();
+        return minedBlocks / totalBlocks.size();
     }
 
     public @NotNull String getId() {
@@ -120,6 +168,14 @@ public class Mine {
 
     public void setResetTime(long resetTime) {
         this.resetTime = resetTime;
+    }
+
+    public File getCachedFile() {
+        return this.cachedFile;
+    }
+
+    public void setCachedFile(File cachedFile) {
+        this.cachedFile = cachedFile;
     }
 
 }

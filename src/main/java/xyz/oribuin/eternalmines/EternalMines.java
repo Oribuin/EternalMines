@@ -1,7 +1,11 @@
 package xyz.oribuin.eternalmines;
 
 import dev.rosewood.rosegarden.RosePlugin;
-import dev.rosewood.rosegarden.manager.*;
+import dev.rosewood.rosegarden.manager.Manager;
+import xyz.oribuin.eternalmines.manager.CommandManager;
+import xyz.oribuin.eternalmines.manager.ConfigurationManager;
+import xyz.oribuin.eternalmines.manager.LocaleManager;
+import xyz.oribuin.eternalmines.manager.MineManager;
 
 import java.util.List;
 
@@ -14,14 +18,14 @@ public class EternalMines extends RosePlugin {
     }
 
     public EternalMines() {
-        super(-1, -1, null, null, null, null);
+        super(-1, -1, ConfigurationManager.class, null, LocaleManager.class, CommandManager.class);
 
         instance = this;
     }
 
     @Override
     public void enable() {
-
+        
     }
 
     @Override
@@ -31,7 +35,9 @@ public class EternalMines extends RosePlugin {
 
     @Override
     protected List<Class<? extends Manager>> getManagerLoadPriority() {
-        return null;
+        return List.of(
+                MineManager.class
+        );
     }
 
 }

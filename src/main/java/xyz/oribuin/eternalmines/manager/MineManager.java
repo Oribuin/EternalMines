@@ -35,22 +35,22 @@ public class MineManager extends Manager {
         }
 
         this.cachedMines.clear();
-        this.rosePlugin.logger.info("Loading all the mines from /EternalMines/mines/");
+        this.rosePlugin.getLogger().info("Loading all the mines from /EternalMines/mines/");
 
         File[] files = minesFolder.listFiles();
-        if (files == null) {
+        if (files == null || files.length == 0) {
             MineUtils.createFile(this.rosePlugin, "mines", "example.yml");
             files = minesFolder.listFiles();
         }
 
         if (files == null) {
-            this.rosePlugin.logger.severe("Unable to load mines from /EternalMines/mines/");
+            this.rosePlugin.getLogger().severe("Unable to load mines from /EternalMines/mines/");
             return;
         }
 
         Arrays.stream(files).filter(file -> file.getName().endsWith(".yml"))
                 .forEach(file -> {
-                    final Mine mine = this.createMine(CommentedFileConfiguration.loadConfiguration(file));
+                    final Mine mine = this.createMine(file, CommentedFileConfiguration.loadConfiguration(file));
                     if (mine != null) {
                         this.cachedMines.put(mine.getId(), mine);
                     }
@@ -63,10 +63,10 @@ public class MineManager extends Manager {
      * @param config The config to load the mine from
      * @return The loaded mine
      */
-    public @Nullable Mine createMine(@NotNull final CommentedFileConfiguration config) {
+    public @Nullable Mine createMine(@NotNull final File file, @NotNull final CommentedFileConfiguration config) {
         CommentedConfigurationSection settings = config.getConfigurationSection("mine-settings");
         if (settings == null) {
-            this.rosePlugin.logger.severe("Unable to load mine settings from " + config.getName());
+            this.rosePlugin.getLogger().severe("Unable to load mine settings from " + config.getName());
             return null;
         }
 
@@ -137,6 +137,7 @@ public class MineManager extends Manager {
 
         // Load the mine settings.
         Mine mine = new Mine(id, spawnLocation);
+        mine.setCachedFile(file);
         mine.setResetPercentage(settings.getDouble("reset-percentage", 0.20));
         mine.setResetTime(settings.getLong("reset-delay", 0) * 1000);
         mine.setBlocks(blocks);
@@ -146,25 +147,15 @@ public class MineManager extends Manager {
     }
 
     /**
-     * Get a mine from the cache
-     *
-     * @param mine The id of the mine
-     */
-    public void saveMine(@NotNull Mine mine) {
-        this.saveMine(mine, null);
-    }
-
-    /**
      * Save a mine to a cache and optionally to a file
      *
      * @param mine The mine to save
-     * @param file The file to save the mine to
      */
-    public void saveMine(@NotNull Mine mine, @Nullable File file) {
+    public void saveMine(@NotNull Mine mine) {
         this.cachedMines.put(mine.getId(), mine);
 
-        if (file != null) {
-            CommentedFileConfiguration config = CommentedFileConfiguration.loadConfiguration(file);
+        if (mine.getCachedFile() != null) {
+            CommentedFileConfiguration config = CommentedFileConfiguration.loadConfiguration(mine.getCachedFile());
             CommentedConfigurationSection settings = config.getConfigurationSection("mine-settings");
 
             if (settings == null)
@@ -183,17 +174,22 @@ public class MineManager extends Manager {
             settings.set("spawn.pitch", mine.getSpawn().getPitch());
 
             // Set the region of the mine
-            settings.set("region.world", mine.getRegion().getPos1().getWorld().getName());
-
             // Save Pos1
-            settings.set("region.pos1.x", mine.getRegion().getPos1().getX());
-            settings.set("region.pos1.y", mine.getRegion().getPos1().getY());
-            settings.set("region.pos1.z", mine.getRegion().getPos1().getZ());
+            if (mine.getRegion().getPos1() != null) {
+                settings.set("region.world", mine.getRegion().getPos1().getWorld().getName());
+
+
+                settings.set("region.pos1.x", mine.getRegion().getPos1().getX());
+                settings.set("region.pos1.y", mine.getRegion().getPos1().getY());
+                settings.set("region.pos1.z", mine.getRegion().getPos1().getZ());
+            }
 
             // Save Pos2
-            settings.set("region.pos2.x", mine.getRegion().getPos2().getX());
-            settings.set("region.pos2.y", mine.getRegion().getPos2().getY());
-            settings.set("region.pos2.z", mine.getRegion().getPos2().getZ());
+            if (mine.getRegion().getPos2() != null) {
+                settings.set("region.pos2.x", mine.getRegion().getPos2().getX());
+                settings.set("region.pos2.y", mine.getRegion().getPos2().getY());
+                settings.set("region.pos2.z", mine.getRegion().getPos2().getZ());
+            }
 
             // Save the blocks of the mine
             CommentedConfigurationSection blockSection = settings.getConfigurationSection("blocks");
@@ -204,7 +200,7 @@ public class MineManager extends Manager {
                 blockSection.set(entry.getKey().name(), entry.getValue());
             }
 
-            config.save(file);
+            config.save(mine.getCachedFile());
         }
     }
 

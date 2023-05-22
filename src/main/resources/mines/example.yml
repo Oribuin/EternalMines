@@ -1,0 +1,25 @@
+# Mine Settings
+mine-settings:
+  id: 'example'
+  reset-percentage: 0.20 # Reset mine once 20% of blocks are mined
+  reset-delay: 192000 # Delay in seconds before mine resets automatically
+  spawn:
+    world: world
+    x: 0
+    y: 0
+    z: 0
+    yaw: 0
+    pitch: 0
+  region:
+    world: world
+    pos1:
+      x: -10
+      y: -10
+      z: -10
+    pos2:
+      x: 10
+      y: 10
+      z: 10
+  blocks:
+    STONE: 0.75
+    COBBLESTONE: 0.25
