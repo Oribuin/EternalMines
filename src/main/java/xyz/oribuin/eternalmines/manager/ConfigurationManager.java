@@ -9,6 +9,11 @@ import xyz.oribuin.eternalmines.EternalMines;
 public class ConfigurationManager extends AbstractConfigurationManager {
 
     public enum Setting implements RoseSetting {
+        RESET_TIMER("reset-timer", null, "The task that checks for whether a mine should reset or not."),
+        RESET_TIMER_ENABLED("reset-timer.enabled", true, "Whether the reset timer is enabled or not."),
+        RESET_TIMER_INTERVAL("reset-timer.interval", 20, "The interval in seconds between each reset check.", "This is in ticks, [20 ticks = 1 second]"),
+
+
         ;
 
         private final String key;

@@ -48,16 +48,16 @@ public class LocationArgumentHandler extends RoseCommandArgumentHandler<Location
         if (sender == null) return null;
 
         if (!(sender instanceof Player player))
-            return List.of("0,0,0");
+            return List.of("0,0,0,world");
 
         Location location = player.getLocation();
 
         Block targetBlock = player.getTargetBlockExact(10);
         if (targetBlock != null && !targetBlock.getType().isAir())
-            return List.of(String.format("%d,%d,%d", targetBlock.getX(), targetBlock.getY(), targetBlock.getZ()));
+            return List.of(String.format("%d,%d,%d,%s", targetBlock.getX(), targetBlock.getY(), targetBlock.getZ()), location.getWorld().getName());
 
         return List.of(
-                String.format("%d,%d,%d", location.getBlockX(), location.getBlockY(), location.getBlockZ())
+                String.format("%d,%d,%d,%s", location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getWorld().getName())
         );
     }
 }

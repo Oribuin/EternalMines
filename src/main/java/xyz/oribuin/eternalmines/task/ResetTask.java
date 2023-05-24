@@ -7,14 +7,11 @@ import xyz.oribuin.eternalmines.mine.Mine;
 
 public class ResetTask extends BukkitRunnable {
 
-    private final EternalMines plugin;
     private final MineManager manager;
 
     public ResetTask(final EternalMines plugin) {
-        this.plugin = plugin;
-        this.manager = this.plugin.getManager(MineManager.class);
+        this.manager = plugin.getManager(MineManager.class);
     }
-
 
     @Override
     public void run() {

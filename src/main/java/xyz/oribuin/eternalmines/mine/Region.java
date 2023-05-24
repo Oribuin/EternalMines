@@ -49,12 +49,10 @@ public class Region {
         }
 
         double totalWeight = blocks.values().stream().mapToDouble(Double::doubleValue).sum();
-        System.out.println(totalWeight);
+
         this.blocks.forEach(block -> {
             double random = Math.random() * totalWeight;
             double weightSum = 0;
-
-
 
             for (Map.Entry<Material, Double> entry : blocks.entrySet()) {
                 weightSum += entry.getValue();
