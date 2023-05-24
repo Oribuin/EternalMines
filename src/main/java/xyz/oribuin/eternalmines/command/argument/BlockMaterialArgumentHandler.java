@@ -34,7 +34,7 @@ public class BlockMaterialArgumentHandler extends RoseCommandArgumentHandler<Mat
 
         return Arrays.stream(Material.values())
                 .filter(material -> material.isBlock() && !material.isAir())
-                .map(Enum::name)
+                .map(material -> material.name().toLowerCase())
                 .toList();
     }
 

@@ -31,7 +31,9 @@ public class EditTypeArgumentHandler extends RoseCommandArgumentHandler<EditType
     @Override
     protected List<String> suggestInternal(RoseCommandArgumentInfo argumentInfo, ArgumentParser argumentParser) {
         argumentParser.next();
-        return Arrays.stream(EditType.values()).map(Enum::name).toList();
+        return Arrays.stream(EditType.values())
+                .map(editType -> editType.name().toLowerCase())
+                .toList();
     }
 
 }
