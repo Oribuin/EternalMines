@@ -8,7 +8,9 @@ import dev.rosewood.rosegarden.command.framework.annotation.Inject;
 import dev.rosewood.rosegarden.command.framework.annotation.Optional;
 import dev.rosewood.rosegarden.command.framework.annotation.RoseExecutable;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import xyz.oribuin.eternalmines.manager.LocaleManager;
 import xyz.oribuin.eternalmines.manager.MineManager;
@@ -22,7 +24,7 @@ public class EditSpawnCommand extends RoseSubCommand {
     }
 
     @RoseExecutable
-    public void execute(@Inject CommandContext context, @Inject Mine mine, @Optional Location location) {
+    public void execute(@Inject CommandContext context, @Inject Mine mine, World world, @Optional Location location) {
         LocaleManager locale = this.rosePlugin.getManager(LocaleManager.class);
         Location spawn = location;
 
@@ -30,14 +32,15 @@ public class EditSpawnCommand extends RoseSubCommand {
             spawn = player.getLocation();
         }
 
-
         if (spawn == null || spawn.getWorld() == null) {
             locale.sendMessage(context.getSender(), "command-edit-spawn-invalid");
             return;
         }
 
+        spawn.setWorld(world);
         mine.setSpawn(spawn);
-        this.rosePlugin.getManager(MineManager.class).saveMine(mine);
+        
+        this.rosePlugin.getManager(MineManager.class).saveMine(mine, true);
         locale.sendMessage(context.getSender(), "command-edit-spawn-success", StringPlaceholders.of(
                 "mine", mine.getId(),
                 "location", MineUtils.formatLocation(spawn) + " (" + spawn.getWorld().getName() + ")"

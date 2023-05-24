@@ -7,6 +7,7 @@ import dev.rosewood.rosegarden.command.framework.RoseCommandWrapper;
 import dev.rosewood.rosegarden.command.framework.annotation.RoseExecutable;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.Location;
+import org.bukkit.World;
 import xyz.oribuin.eternalmines.manager.LocaleManager;
 import xyz.oribuin.eternalmines.manager.MineManager;
 import xyz.oribuin.eternalmines.mine.Mine;
@@ -18,7 +19,7 @@ public class CreateCommand extends RoseCommand {
     }
 
     @RoseExecutable
-    public void execute(CommandContext context, String name, Location spawn) {
+    public void execute(CommandContext context, String name, World world, Location spawn) {
 
         final LocaleManager locale = this.rosePlugin.getManager(LocaleManager.class);
         final MineManager manager = this.rosePlugin.getManager(MineManager.class);
@@ -29,6 +30,8 @@ public class CreateCommand extends RoseCommand {
         }
 
         Mine mine = new Mine(name.toLowerCase(), spawn);
+        spawn.setWorld(world);
+
         if (mine.create(this.rosePlugin)) {
             locale.sendMessage(context.getSender(), "command-create-success", StringPlaceholders.of("name", name));
             return;

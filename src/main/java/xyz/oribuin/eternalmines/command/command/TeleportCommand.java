@@ -26,24 +26,12 @@ public class TeleportCommand extends RoseCommand {
         final Player player = (Player) context.getSender();
 
         // Teleport the player to the mine's spawn, using spigot's teleportation method if the server is not running paper.
-        if (!NMSUtil.isPaper()) {
-            if (player.teleport(mine.getSpawn())) {
-                locale.sendMessage(player, "command-teleport-success", StringPlaceholders.of("mine", mine.getId()));
-                return;
-            }
-
-            locale.sendMessage(player, "command-teleport-failed");
+        if (NMSUtil.isPaper() ? player.teleportAsync(mine.getSpawn()).isDone() : player.teleport(mine.getSpawn())) {
+            locale.sendMessage(player, "command-teleport-success", StringPlaceholders.of("mine", mine.getId()));
             return;
         }
 
-        player.teleportAsync(mine.getSpawn()).thenAccept(result -> {
-            if (result) {
-                locale.sendMessage(player, "command-teleport-success", StringPlaceholders.of("mine", mine.getId()));
-                return;
-            }
-
-            locale.sendMessage(player, "command-teleport-failed");
-        });
+        locale.sendMessage(player, "command-teleport-failed");
     }
 
     @Override

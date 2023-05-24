@@ -48,13 +48,12 @@ public class MineManager extends Manager {
             return;
         }
 
-        Arrays.stream(files).filter(file -> file.getName().endsWith(".yml"))
-                .forEach(file -> {
-                    final Mine mine = this.createMine(file, CommentedFileConfiguration.loadConfiguration(file));
-                    if (mine != null) {
-                        this.cachedMines.put(mine.getId(), mine);
-                    }
-                });
+        Arrays.stream(files).filter(file -> file.getName().endsWith(".yml")).forEach(file -> {
+            final Mine mine = this.createMine(file, CommentedFileConfiguration.loadConfiguration(file));
+            if (mine != null) {
+                this.cachedMines.put(mine.getId(), mine);
+            }
+        });
     }
 
     /**
@@ -71,52 +70,39 @@ public class MineManager extends Manager {
         }
 
         final String id = settings.getString("id"); // Id of the mine
-        if (id == null) return null;
+        if (id == null) {
+            this.rosePlugin.getLogger().severe("Unable to load mine id from " + file.getName());
+            return null;
+        }
 
         Location spawnLocation = null;
+        String worldName = settings.getString("world", "");
+        World world = Bukkit.getWorld(worldName); // World of the mine
+        if (world == null) {
+            this.rosePlugin.getLogger().severe("Unable to load mine world from " + file.getName() + " (World: " + worldName + " does not exist)");
+            return null;
+        }
 
         // Load spawn location of the mine
         final CommentedConfigurationSection spawnSection = settings.getConfigurationSection("spawn");
         if (spawnSection != null) {
-            final String world = spawnSection.getString("world");
-
-            if (world != null) {
-                spawnLocation = new Location(
-                        this.rosePlugin.getServer().getWorld(world),
-                        spawnSection.getDouble("x"),
-                        spawnSection.getDouble("y"),
-                        spawnSection.getDouble("z"),
-                        (float) spawnSection.getDouble("yaw"),
-                        (float) spawnSection.getDouble("pitch")
-                );
-            }
+            spawnLocation = new Location(world, spawnSection.getDouble("x"), spawnSection.getDouble("y"), spawnSection.getDouble("z"), (float) spawnSection.getDouble("yaw"), (float) spawnSection.getDouble("pitch"));
         }
 
-        if (spawnLocation == null) return null;
+        if (spawnLocation == null) {
+            this.rosePlugin.getLogger().severe("Unable to load mine spawn location from " + file.getName());
+            return null;
+        }
 
         // Load region of the mine
         final Region region = new Region();
         final CommentedConfigurationSection regions = settings.getConfigurationSection("region");
         if (regions != null) {
-            World world = Bukkit.getWorld(regions.getString("world", "")); // World of the mine
-            if (world != null) {
-                final Location pos1 = new Location(
-                        world,
-                        regions.getDouble("pos1.x"),
-                        regions.getDouble("pos1.y"),
-                        regions.getDouble("pos1.z")
-                );
+            final Location pos1 = new Location(world, regions.getDouble("pos1.x"), regions.getDouble("pos1.y"), regions.getDouble("pos1.z"));
+            final Location pos2 = new Location(world, regions.getDouble("pos2.x"), regions.getDouble("pos2.y"), regions.getDouble("pos2.z"));
 
-                final Location pos2 = new Location(
-                        world,
-                        regions.getDouble("pos2.x"),
-                        regions.getDouble("pos2.y"),
-                        regions.getDouble("pos2.z")
-                );
-
-                region.setPos1(pos1);
-                region.setPos2(pos2);
-            }
+            region.setPos1(pos1);
+            region.setPos2(pos2);
         }
 
         // Load blocks of the mine
@@ -128,8 +114,7 @@ public class MineManager extends Manager {
                     double chance = Double.parseDouble(blockSection.getString(s, "0.0"));
                     Material material = Material.matchMaterial(s);
 
-                    if (material != null && chance > 0)
-                        blocks.put(material, chance);
+                    if (material != null && chance > 0) blocks.put(material, chance);
                 } catch (NumberFormatException ignored) {
                 }
             });
@@ -137,9 +122,10 @@ public class MineManager extends Manager {
 
         // Load the mine settings.
         Mine mine = new Mine(id, spawnLocation);
+        mine.setWorld(world);
         mine.setCachedFile(file);
-        mine.setResetPercentage(settings.getDouble("reset-percentage", 0.20));
-        mine.setResetTime(settings.getLong("reset-delay", 0) * 1000);
+        mine.setResetPercentage(settings.getDouble("reset-percentage", 20));
+        mine.setResetTime(Math.max(1, settings.getLong("reset-delay", 300)));
         mine.setBlocks(blocks);
         mine.setRegion(region);
 
@@ -157,10 +143,10 @@ public class MineManager extends Manager {
      *
      * @param mine The mine to save
      */
-    public void saveMine(@NotNull Mine mine) {
+    public void saveMine(@NotNull Mine mine, boolean saveToFile) {
         this.cachedMines.put(mine.getId(), mine);
 
-        if (mine.getCachedFile() != null) {
+        if (mine.getCachedFile() != null && saveToFile) {
             CommentedFileConfiguration config = CommentedFileConfiguration.loadConfiguration(mine.getCachedFile());
             CommentedConfigurationSection settings = config.getConfigurationSection("mine-settings");
 
@@ -169,22 +155,21 @@ public class MineManager extends Manager {
 
             settings.set("id", mine.getId());
             settings.set("reset-percentage", mine.getResetPercentage());
-            settings.set("reset-delay", mine.getResetTime() / 1000);
+            settings.set("reset-delay", mine.getResetTime());
+            settings.set("world", mine.getWorld());
 
             // Set the spawn location of the mine
-            settings.set("spawn.world", mine.getSpawn().getWorld().getName());
-            settings.set("spawn.x", mine.getSpawn().getX());
-            settings.set("spawn.y", mine.getSpawn().getY());
-            settings.set("spawn.z", mine.getSpawn().getZ());
-            settings.set("spawn.yaw", mine.getSpawn().getYaw());
-            settings.set("spawn.pitch", mine.getSpawn().getPitch());
+            if (mine.getSpawn().getWorld() != null) {
+                settings.set("spawn.x", mine.getSpawn().getX());
+                settings.set("spawn.y", mine.getSpawn().getY());
+                settings.set("spawn.z", mine.getSpawn().getZ());
+                settings.set("spawn.yaw", mine.getSpawn().getYaw());
+                settings.set("spawn.pitch", mine.getSpawn().getPitch());
+            }
 
             // Set the region of the mine
             // Save Pos1
             if (mine.getRegion().getPos1() != null) {
-                settings.set("region.world", mine.getRegion().getPos1().getWorld().getName());
-
-
                 settings.set("region.pos1.x", mine.getRegion().getPos1().getX());
                 settings.set("region.pos1.y", mine.getRegion().getPos1().getY());
                 settings.set("region.pos1.z", mine.getRegion().getPos1().getZ());
@@ -212,7 +197,6 @@ public class MineManager extends Manager {
                 this.rosePlugin.getLogger().warning("The total chance of the blocks in " + mine.getId() + " is above 100% (" + totalChance + "%)");
             }
 
-
             config.save(mine.getCachedFile());
         }
     }
@@ -234,12 +218,13 @@ public class MineManager extends Manager {
      * @return The mine
      */
     public @Nullable Mine getMine(@NotNull Location mine) {
-        for (Mine m : this.cachedMines.values()) {
-            if (m.getRegion().isInside(mine)) {
-                return m;
-            }
-        }
-        return null;
+        return this.cachedMines.values().stream().filter(m -> m.getRegion().isInside(mine)).findFirst().orElse(null);
+//        for (Mine m : this.cachedMines.values()) {
+//            if (m.getRegion().isInside(mine)) {
+//                return m;
+//            }
+//        }
+//        return null;
     }
 
     @Override

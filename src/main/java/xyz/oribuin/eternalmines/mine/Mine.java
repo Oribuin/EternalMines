@@ -5,10 +5,12 @@ import dev.rosewood.rosegarden.utils.NMSUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xyz.oribuin.eternalmines.EternalMines;
 import xyz.oribuin.eternalmines.manager.MineManager;
 import xyz.oribuin.eternalmines.util.MineUtils;
@@ -21,24 +23,26 @@ import java.util.Map;
 public class Mine {
 
     private final @NotNull String id; // Name of the mine
+    private @NotNull World world; // World of the mine
     private @NotNull Location spawn; // Spawn of the mine (Where players teleport to)
     private @NotNull Region region; // Region of the mine (Where players can mine)
     private @NotNull Map<Material, Double> blocks; // Block material and chance to spawn
     private double resetPercentage; // % of blocks that need to be mined to reset the mine
     private long resetTime; // (Time in milliseconds) Delay between the mine resets
     private long lastReset; // (Time in milliseconds) Last time the mine was reset
-    private File cachedFile; // Cached file of the mine
+    private @Nullable File cachedFile; // Cached file of the mine
 
     public Mine(@NotNull String id, @NotNull Location spawn) {
         this.id = id;
         this.spawn = spawn;
+        this.world = spawn.getWorld();
         this.region = new Region();
         this.blocks = new HashMap<>() {{
             this.put(Material.STONE, 100.0);
         }};
-        this.resetPercentage = 0.20;
+        this.resetPercentage = 20;
         this.lastReset = System.currentTimeMillis();
-        this.resetTime = 0;
+        this.resetTime = 300;
         this.cachedFile = null;
     }
 
@@ -48,7 +52,7 @@ public class Mine {
 
         try {
             this.cachedFile = MineUtils.createFile(plugin, "mines", this.id + ".yml");
-            plugin.getManager(MineManager.class).saveMine(this);
+            plugin.getManager(MineManager.class).saveMine(this, true);
         } catch (Exception ex) {
             ex.printStackTrace();
             return false;
@@ -72,7 +76,7 @@ public class Mine {
         // Remove all non-block materials
         blocks.keySet().removeIf(material -> !material.isBlock());
 
-        this.lastReset = System.currentTimeMillis();
+        this.lastReset = System.currentTimeMillis(); // Set the last reset to the current time
         this.region.loadBlocksInside(); // Load all the blocks inside the region
 
         this.region.getEntitiesInside().stream()
@@ -90,6 +94,8 @@ public class Mine {
         // Fill the region with the blocks, cannot be run async due to Bukkit API
         // TODO: Optimize this to use a cuboid region iterator
         Bukkit.getScheduler().runTask(EternalMines.getInstance(), () -> this.region.fill(blocks));
+        EternalMines.getInstance().getManager(MineManager.class).saveMine(this, false); // Save the mine
+
         return true;
 
     }
@@ -100,7 +106,7 @@ public class Mine {
      * @return the time left in milliseconds
      */
     public long getResetTimeLeft() {
-        return this.resetTime - (System.currentTimeMillis() - this.lastReset);
+        return (this.lastReset + (this.resetTime * 1000)) - System.currentTimeMillis();
     }
 
     /**
@@ -109,10 +115,7 @@ public class Mine {
      * @return true if the mine should be reset
      */
     public boolean shouldReset() {
-        if (this.getPercentageLeft() <= this.resetPercentage)
-            return true;
-
-        return System.currentTimeMillis() - this.lastReset >= this.resetTime;
+        return (System.currentTimeMillis() - this.lastReset) >= (this.resetTime * 1000) || this.getPercentageLeft() <= this.resetPercentage;
     }
 
     /**
@@ -123,20 +126,21 @@ public class Mine {
     public double getPercentageLeft() {
         List<Block> blocksInMine = this.region.getBlocks();
         if (blocksInMine.isEmpty()) {
-            this.region.loadBlocksInside(); // Load all the blocks inside the region
-            blocksInMine.addAll(this.region.getBlocks()); // Add all the blocks to the list
+            // Load all the blocks inside the region
+            this.region.loadBlocksInside();
+
+            // Add all the blocks to the list
+            blocksInMine.addAll(this.region.getBlocks());
         }
 
         int airBlocks = (int) blocksInMine.stream().filter(block -> block == null || block.getType().isAir()).count();
 
-        if (blocksInMine.isEmpty() || airBlocks == blocksInMine.size()) {
+        if (blocksInMine.isEmpty() || airBlocks == blocksInMine.size())
             return 0.0;
-        }
 
         int totalBlocks = this.region.getTotalBlocks();
         int blocksLeft = totalBlocks - airBlocks;
-
-        return Math.round(((double) blocksLeft / totalBlocks) * 100.0);
+        return Math.round((double) blocksLeft / totalBlocks) * 100.0;
     }
 
     /**
@@ -146,7 +150,7 @@ public class Mine {
      */
     public double getPercentageBroken() {
         double percentageLeft = this.getPercentageLeft();
-        if (percentageLeft == 0.0)
+        if (percentageLeft <= 0.0)
             return 0.0;
 
         return 100.0 - percentageLeft;
@@ -158,6 +162,14 @@ public class Mine {
 
     public @NotNull Location getSpawn() {
         return this.spawn;
+    }
+
+    public @NotNull World getWorld() {
+        return this.world;
+    }
+
+    public void setWorld(@NotNull World world) {
+        this.world = world;
     }
 
     public void setSpawn(@NotNull Location spawn) {
@@ -204,11 +216,11 @@ public class Mine {
         this.resetTime = resetTime;
     }
 
-    public File getCachedFile() {
+    public @Nullable File getCachedFile() {
         return this.cachedFile;
     }
 
-    public void setCachedFile(File cachedFile) {
+    public void setCachedFile(@Nullable File cachedFile) {
         this.cachedFile = cachedFile;
     }
 

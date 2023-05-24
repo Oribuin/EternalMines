@@ -21,7 +21,7 @@ public class EditPercentageCommand extends RoseSubCommand {
     public void execute(@Inject CommandContext context, @Inject Mine mine, Double resetPercentage) {
         mine.setResetPercentage(resetPercentage);
 
-        this.rosePlugin.getManager(MineManager.class).saveMine(mine);
+        this.rosePlugin.getManager(MineManager.class).saveMine(mine, true);
         this.rosePlugin.getManager(LocaleManager.class)
                 .sendMessage(
                         context.getSender(),

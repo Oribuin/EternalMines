@@ -31,7 +31,7 @@ public class EditBlocksCommand extends RoseSubCommand {
                 }
 
                 mine.getBlocks().put(material, percentage);
-                this.rosePlugin.getManager(MineManager.class).saveMine(mine);
+                this.rosePlugin.getManager(MineManager.class).saveMine(mine, true);
 
                 locale.sendMessage(context.getSender(), "command-edit-blocks-set-success",
                         StringPlaceholders.of("mine", mine.getId(),
@@ -51,7 +51,7 @@ public class EditBlocksCommand extends RoseSubCommand {
                 }
 
                 mine.getBlocks().remove(material);
-                this.rosePlugin.getManager(MineManager.class).saveMine(mine);
+                this.rosePlugin.getManager(MineManager.class).saveMine(mine, true);
 
                 locale.sendMessage(context.getSender(), "command-edit-blocks-remove-success",
                         StringPlaceholders.of("mine", mine.getId(), "material", material.name())
