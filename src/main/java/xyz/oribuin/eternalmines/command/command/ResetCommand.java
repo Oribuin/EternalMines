@@ -48,7 +48,7 @@ public class ResetCommand extends RoseCommand {
 
     @Override
     public String getRequiredPermission() {
-        return "eternalmines.command.reset";
+        return "eternalmines.reset";
     }
 
 }

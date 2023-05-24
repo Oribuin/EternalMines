@@ -52,7 +52,7 @@ public class CreateCommand extends RoseCommand {
 
     @Override
     public String getRequiredPermission() {
-        return "eternalmines.command.create";
+        return "eternalmines.create";
     }
 
 }

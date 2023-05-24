@@ -40,7 +40,7 @@ public class EditCommand extends RoseCommand {
 
     @Override
     public String getRequiredPermission() {
-        return "eternalmines.command.edit";
+        return "eternalmines.edit";
     }
 
 }

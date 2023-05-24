@@ -51,7 +51,7 @@ public class TeleportCommand extends RoseCommand {
 
     @Override
     public String getRequiredPermission() {
-        return "eternalmines.command.teleport";
+        return "eternalmines.teleport";
     }
 
     @Override
