@@ -17,7 +17,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class Mine {
 
@@ -96,23 +95,32 @@ public class Mine {
     }
 
     /**
+     * Time left until the mine resets
+     *
+     * @return the time left in milliseconds
+     */
+    public long getResetTimeLeft() {
+        return this.resetTime - (System.currentTimeMillis() - this.lastReset);
+    }
+
+    /**
      * Check if a mine is ready to be reset based on the reset percentage
      *
      * @return true if the mine should be reset
      */
     public boolean shouldReset() {
-        if (this.calculatePercentage() <= this.resetPercentage)
+        if (this.getPercentageLeft() <= this.resetPercentage)
             return true;
 
         return System.currentTimeMillis() - this.lastReset >= this.resetTime;
     }
 
     /**
-     * Calculate the percentage of blocks mined in the mine
+     * Calculates the % of blocks left in the mine
      *
-     * @return the percentage of blocks mined
+     * @return the percentage of blocks left
      */
-    public double calculatePercentage() {
+    public double getPercentageLeft() {
         List<Block> blocksInMine = this.region.getBlocks();
         if (blocksInMine.isEmpty()) {
             this.region.loadBlocksInside(); // Load all the blocks inside the region
@@ -129,6 +137,19 @@ public class Mine {
         int blocksLeft = totalBlocks - airBlocks;
 
         return Math.round(((double) blocksLeft / totalBlocks) * 100.0);
+    }
+
+    /**
+     * Calculates the % of blocks broken in the mine
+     *
+     * @return the percentage of blocks broken
+     */
+    public double getPercentageBroken() {
+        double percentageLeft = this.getPercentageLeft();
+        if (percentageLeft == 0.0)
+            return 0.0;
+
+        return 100.0 - percentageLeft;
     }
 
     public @NotNull String getId() {

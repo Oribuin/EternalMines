@@ -143,6 +143,12 @@ public class MineManager extends Manager {
         mine.setBlocks(blocks);
         mine.setRegion(region);
 
+        // Check if the blocks combined chance is above 100%
+        double totalChance = blocks.values().stream().mapToDouble(Double::doubleValue).sum();
+        if (totalChance > 100) {
+            this.rosePlugin.getLogger().warning("The total chance of the blocks in " + mine.getId() + " is above 100% (" + totalChance + "%)");
+        }
+
         return mine;
     }
 
@@ -199,6 +205,13 @@ public class MineManager extends Manager {
             for (Map.Entry<Material, Double> entry : mine.getBlocks().entrySet()) {
                 blockSection.set(entry.getKey().name(), entry.getValue());
             }
+
+            // Check if the blocks combined chance is above 100%
+            double totalChance = mine.getBlocks().values().stream().mapToDouble(Double::doubleValue).sum();
+            if (totalChance > 100) {
+                this.rosePlugin.getLogger().warning("The total chance of the blocks in " + mine.getId() + " is above 100% (" + totalChance + "%)");
+            }
+
 
             config.save(mine.getCachedFile());
         }

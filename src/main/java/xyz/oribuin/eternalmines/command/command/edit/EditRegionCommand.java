@@ -1,9 +1,10 @@
-package xyz.oribuin.eternalmines.command.command;
+package xyz.oribuin.eternalmines.command.command.edit;
 
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.command.framework.CommandContext;
-import dev.rosewood.rosegarden.command.framework.RoseCommand;
 import dev.rosewood.rosegarden.command.framework.RoseCommandWrapper;
+import dev.rosewood.rosegarden.command.framework.RoseSubCommand;
+import dev.rosewood.rosegarden.command.framework.annotation.Inject;
 import dev.rosewood.rosegarden.command.framework.annotation.RoseExecutable;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.Location;
@@ -13,14 +14,14 @@ import xyz.oribuin.eternalmines.manager.MineManager;
 import xyz.oribuin.eternalmines.mine.Mine;
 import xyz.oribuin.eternalmines.mine.Region;
 
-public class RegionCommand extends RoseCommand {
+public class EditRegionCommand extends RoseSubCommand {
 
-    public RegionCommand(RosePlugin rosePlugin, RoseCommandWrapper parent) {
+    public EditRegionCommand(RosePlugin rosePlugin, RoseCommandWrapper parent) {
         super(rosePlugin, parent);
     }
 
     @RoseExecutable
-    public void execute(CommandContext context, Mine mine, World world, Location pos1, Location pos2) {
+    public void execute(@Inject CommandContext context, @Inject Mine mine, World world, Location pos1, Location pos2) {
 
         // Set the world of the locations.
         pos1.setWorld(world);
@@ -31,7 +32,7 @@ public class RegionCommand extends RoseCommand {
         this.rosePlugin.getManager(LocaleManager.class)
                 .sendMessage(
                         context.getSender(),
-                        "command-region-success",
+                        "command-edit-region-success",
                         StringPlaceholders.of("mine", mine.getId())
                 );
     }
@@ -39,16 +40,6 @@ public class RegionCommand extends RoseCommand {
     @Override
     protected String getDefaultName() {
         return "region";
-    }
-
-    @Override
-    public String getDescriptionKey() {
-        return "command-region-description";
-    }
-
-    @Override
-    public String getRequiredPermission() {
-        return "eternalmines.command.region";
     }
 
 }

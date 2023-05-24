@@ -1,17 +1,25 @@
 package xyz.oribuin.eternalmines.util;
 
 import dev.rosewood.rosegarden.RosePlugin;
+import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.HexUtils;
 import dev.rosewood.rosegarden.utils.NMSUtil;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +29,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public final class MineUtils {
 
@@ -320,4 +329,94 @@ public final class MineUtils {
 
         return file;
     }
+
+    @Nullable
+    public static ItemStack getItemStack(@NotNull CommentedConfigurationSection config, @NotNull String path, @Nullable Player player, @Nullable StringPlaceholders placeholders) {
+        Material material = Material.getMaterial(PlaceholderAPI.setPlaceholders(player, config.getString(path + ".material", "")));
+        if (material == null)
+            return null;
+
+        if (placeholders == null)
+            placeholders = StringPlaceholders.empty();
+
+        // Format the item lore
+        StringPlaceholders finalPlaceholders = placeholders;
+        List<String> lore = new ArrayList<>(config.getStringList(path + ".lore"))
+                .stream()
+                .map(s -> format(player, s, finalPlaceholders))
+                .toList();
+
+        // Get item flags
+        ItemFlag[] flags = config.getStringList(path + ".flags")
+                .stream()
+                .map(String::toUpperCase)
+                .map(ItemFlag::valueOf)
+                .toArray(ItemFlag[]::new);
+
+        // Build the item stack
+        ItemBuilder builder = new ItemBuilder(material)
+                .setName(format(player, config.getString(path + ".name"), placeholders))
+                .setLore(lore)
+                .setAmount(config.getInt(path + ".amount", 1))
+                .setFlags(flags)
+                .setTexture(config.getString(path + ".texture"))
+                .glow(Boolean.parseBoolean(format(player, config.getString(path + ".glow", "false"), placeholders)))
+                .setPotionColor(fromHex(config.getString(path + ".potion-color", null)))
+                .setModel(parseInteger(format(player, config.getString(path + ".model-data", "-1"), placeholders)));
+
+        // Get item owner
+        String owner = config.getString(path + ".owner", null);
+        if (owner != null) {
+            if (owner.equalsIgnoreCase("self")) {
+                builder.setOwner(player);
+            } else {
+                if (NMSUtil.isPaper() && Bukkit.getOfflinePlayerIfCached(owner) != null)
+                    builder.setOwner(Bukkit.getOfflinePlayerIfCached(owner));
+                else
+                    builder.setOwner(Bukkit.getOfflinePlayer(owner));
+            }
+        }
+
+        CommentedConfigurationSection enchants = config.getConfigurationSection(path + ".enchants");
+        if (enchants != null) {
+            enchants.getKeys(false).forEach(key -> {
+                Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(key.toLowerCase()));
+                if (enchantment == null)
+                    return;
+
+                builder.addEnchant(enchantment, enchants.getInt(key));
+            });
+        }
+
+        return builder.create();
+    }
+
+    /**
+     * Get ItemStack from CommentedFileSection path
+     *
+     * @param config The CommentedFileSection
+     * @param path   The path to the item
+     * @return The itemstack
+     */
+    public static ItemStack getItemStack(CommentedConfigurationSection config, String path) {
+        return getItemStack(config, path, null, StringPlaceholders.empty());
+    }
+
+    public static ItemStack getItemStack(CommentedConfigurationSection config, String path, Player player) {
+        return getItemStack(config, path, player, StringPlaceholders.empty());
+    }
+
+    /**
+     * Format Milliseconds into xh xm xs time format
+     *
+     * @param milliseconds Milliseconds
+     * @return String in format xh xm xs format
+     */
+    public static String convertMilliSecondsToHMmSs(long milliseconds) {
+        return String.format("%02dh %02dm %02ds",
+                TimeUnit.MILLISECONDS.toHours(milliseconds),
+                TimeUnit.MILLISECONDS.toMinutes(milliseconds) % TimeUnit.HOURS.toMinutes(1),
+                TimeUnit.MILLISECONDS.toSeconds(milliseconds) % TimeUnit.MINUTES.toSeconds(1));
+    }
+
 }

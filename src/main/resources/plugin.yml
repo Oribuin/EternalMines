@@ -4,3 +4,7 @@ version: '@version@'
 api-version: '1.16'
 author: Oribuin
 description: A simple bloat-free plugin to create prison mines.
+libraries:
+  - "net.kyori:adventure-api:4.11.0"
+  - "net.kyori:adventure-text-serializer-legacy:4.11.0"
+  - "net.kyori:adventure-text-serializer-gson:4.11.0"

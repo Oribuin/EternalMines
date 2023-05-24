@@ -1,7 +1,6 @@
 package xyz.oribuin.eternalmines.listener;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -24,7 +23,7 @@ public class MineListener implements Listener {
         Mine mine = this.manager.getMine(event.getBlock().getLocation());
         if (mine == null) return;
 
-        double currentProgress = mine.calculatePercentage();
+        double currentProgress = mine.getPercentageLeft();
         event.getPlayer().sendActionBar(MiniMessage.miniMessage().deserialize("<gradient:#7F7FD5:#86A8E7:#91EAE4><bold>Mine Progress: " + currentProgress + "%"));
 
         if (mine.shouldReset()) {

@@ -7,12 +7,9 @@ import dev.rosewood.rosegarden.command.framework.RoseCommandWrapper;
 import dev.rosewood.rosegarden.command.framework.annotation.RoseExecutable;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import xyz.oribuin.eternalmines.manager.LocaleManager;
 import xyz.oribuin.eternalmines.manager.MineManager;
 import xyz.oribuin.eternalmines.mine.Mine;
-import xyz.oribuin.eternalmines.mine.Position;
-import xyz.oribuin.eternalmines.mine.Region;
 
 public class CreateCommand extends RoseCommand {
 
@@ -37,7 +34,7 @@ public class CreateCommand extends RoseCommand {
             return;
         }
 
-        System.out.println("Unable to create mine " + name + "!");
+        locale.sendMessage(context.getSender(), "command-create-already-exists");
     }
 
     @Override
