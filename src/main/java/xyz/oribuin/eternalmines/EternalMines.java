@@ -2,6 +2,8 @@ package xyz.oribuin.eternalmines;
 
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.manager.Manager;
+import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
 import xyz.oribuin.eternalmines.hook.MineExpansion;
 import xyz.oribuin.eternalmines.listener.MineListener;
@@ -31,7 +33,16 @@ public class EternalMines extends RosePlugin {
 
     @Override
     public void enable() {
-        // Register Listeners.
+        // Register PlaceholderAPI
+        if (this.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI"))
+            new MineExpansion(this).register();
+    }
+
+
+    @Override
+    public void reload() {
+        super.reload();
+
         PluginManager pluginManager = this.getServer().getPluginManager();
         if (Setting.LISTENERS_BREAK_BLOCK.getBoolean())
             pluginManager.registerEvents(new MineListener(this), this);
@@ -42,15 +53,12 @@ public class EternalMines extends RosePlugin {
         // Register Plugin Tasks.
         if (Setting.RESET_TIMER_ENABLED.getBoolean())
             new ResetTask(this).runTaskTimerAsynchronously(this, 0L, Setting.RESET_TIMER_INTERVAL.getLong());
-
-        if (pluginManager.isPluginEnabled("PlaceholderAPI"))
-            new MineExpansion(this).register();
-
     }
 
     @Override
     public void disable() {
-
+        HandlerList.unregisterAll(this); // Unregister all listeners.
+        Bukkit.getScheduler().cancelTasks(this);
     }
 
     @Override
