@@ -413,10 +413,22 @@ public final class MineUtils {
      * @return String in format xh xm xs format
      */
     public static String convertMilliSecondsToHMmSs(long milliseconds) {
-        return String.format("%02dh %02dm %02ds",
-                TimeUnit.MILLISECONDS.toHours(milliseconds),
-                TimeUnit.MILLISECONDS.toMinutes(milliseconds) % TimeUnit.HOURS.toMinutes(1),
-                TimeUnit.MILLISECONDS.toSeconds(milliseconds) % TimeUnit.MINUTES.toSeconds(1));
+
+        long hours = TimeUnit.MILLISECONDS.toHours(milliseconds);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds) % TimeUnit.HOURS.toMinutes(1);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds) % TimeUnit.MINUTES.toSeconds(1);
+
+        StringBuilder sb = new StringBuilder();
+        if (hours > 0)
+            sb.append(hours).append("h ");
+
+        if (minutes > 0)
+            sb.append(minutes).append("m ");
+
+        if (seconds > 0)
+            sb.append(seconds).append("s");
+
+        return sb.toString();
     }
 
 }
