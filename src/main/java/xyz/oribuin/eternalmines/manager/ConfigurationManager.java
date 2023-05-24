@@ -13,6 +13,9 @@ public class ConfigurationManager extends AbstractConfigurationManager {
         RESET_TIMER_ENABLED("reset-timer.enabled", true, "Whether the reset timer is enabled or not."),
         RESET_TIMER_INTERVAL("reset-timer.interval", 20, "The interval in seconds between each reset check.", "This is in ticks, [20 ticks = 1 second]"),
 
+        LISTENERS("listeners", null, "The listeners that are registered to the plugin."),
+        LISTENERS_BREAK_BLOCK("listeners.break-block", true, "Whether the break block listener is enabled or not.", "This listener is used to check whether the mine should reset when a block is broken."),
+        LISTENERS_LOGIN("listeners.login", true, "Whether the login listener is enabled or not.", "This listener is used to teleport the player to the mine spawn when they login inside a mine."),
 
         ;
 

@@ -5,6 +5,7 @@ import dev.rosewood.rosegarden.manager.Manager;
 import org.bukkit.plugin.PluginManager;
 import xyz.oribuin.eternalmines.hook.MineExpansion;
 import xyz.oribuin.eternalmines.listener.MineListener;
+import xyz.oribuin.eternalmines.listener.PlayerListeners;
 import xyz.oribuin.eternalmines.manager.CommandManager;
 import xyz.oribuin.eternalmines.manager.ConfigurationManager;
 import xyz.oribuin.eternalmines.manager.ConfigurationManager.Setting;
@@ -32,7 +33,11 @@ public class EternalMines extends RosePlugin {
     public void enable() {
         // Register Listeners.
         PluginManager pluginManager = this.getServer().getPluginManager();
-        pluginManager.registerEvents(new MineListener(this), this);
+        if (Setting.LISTENERS_BREAK_BLOCK.getBoolean())
+            pluginManager.registerEvents(new MineListener(this), this);
+
+        if (Setting.LISTENERS_LOGIN.getBoolean())
+            pluginManager.registerEvents(new PlayerListeners(this), this);
 
         // Register Plugin Tasks.
         if (Setting.RESET_TIMER_ENABLED.getBoolean())
