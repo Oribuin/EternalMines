@@ -31,8 +31,13 @@ command-create-description: 'Create a new mine'
 command-create-success: 'You have created the mine [%mine%]'
 command-create-already-exists: 'The mine you have tried to create already exists.'
 
+# Delete Command
+command-delete-description: 'Delete a mine'
+command-delete-success: 'You have deleted the mine [#00B4DB%mine%&f]'
+command-delete-doesnt-exist: 'The mine you have provided does not exist.'
+
 # Edit Command
-command-edit-description: 'Edit a mine\''s values'
+command-edit-description: 'Edit a mine''s values'
 command-edit-blocks-set-success: 'You have successfully set #00B4DB%material% &f[#00B4DB%percentage%%&f] to the mine [#00B4DB%mine%&f]'
 command-edit-percentage-success: 'You have successfully set the percentage of the mine [#00B4DB%mine%&f] to [#00B4DB%percentage%%&f]'
 command-edit-region-success: 'You have successfully set the region of the mine [#00B4DB%mine%&f]'
@@ -40,6 +45,7 @@ command-edit-spawn-success: 'You have successfully set the spawn of the mine [#0
 command-edit-blocks-remove-success: 'You have successfully removed #00B4DB%material%&f from the mine [#00B4DB%mine%&f]'
 command-edit-blocks-set-invalid: 'Please enter a percentage between 0.0 and 100.0'
 command-edit-blocks-remove-invalid: 'The mine [#00B4DB%mine%&f] does not contain the material [#00B4DB%material%&f]'
+command-edit-region-invalid-world: 'You need to be in the same world as the mine to set the region'
 command-edit-spawn-invalid: 'Please enter a valid location'
 
 # Reset Command

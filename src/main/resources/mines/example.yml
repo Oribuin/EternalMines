@@ -2,7 +2,7 @@
 mine-settings:
   id: 'example' # ID of the mine
   reset-percentage: 20 # Reset mine once 20% of blocks are mined
-  reset-delay: 300 # Delay in seconds before mine resets automatically
+  reset-delay: -1 # Delay in seconds before mine resets automatically
   world: world # World to spawn mine in
   spawn: # Teleport player to this location when the mine is reset
     x: 0
@@ -10,7 +10,7 @@ mine-settings:
     z: 0
     yaw: 0
     pitch: 0
-  region:
+  region: # The place where the mine will spawn
     pos1:
       x: -10
       y: -10
@@ -20,5 +20,5 @@ mine-settings:
       y: 10
       z: 10
   blocks: # List of blocks to spawn in the mine and their percentages
-    STONE: 75
-    COBBLESTONE: 25
+    STONE: 75 # 75% chance to spawn stone
+    COBBLESTONE: 25 # 25% chance to spawn cobblestone

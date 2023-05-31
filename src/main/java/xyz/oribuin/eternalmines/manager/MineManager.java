@@ -227,6 +227,20 @@ public class MineManager extends Manager {
 //        return null;
     }
 
+    public boolean deleteMine(@NotNull final String name) {
+        Mine mine = this.cachedMines.get(name);
+        if (mine == null) return false;
+
+        // Delete the mine file
+        if (mine.getCachedFile() != null) {
+            mine.getCachedFile().delete();
+        }
+
+        // Delete the mine from the cache
+        this.cachedMines.remove(name);
+        return true;
+    }
+
     @Override
     public void disable() {
         this.cachedMines.clear();

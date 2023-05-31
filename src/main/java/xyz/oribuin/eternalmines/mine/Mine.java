@@ -115,6 +115,11 @@ public class Mine {
      * @return true if the mine should be reset
      */
     public boolean shouldReset() {
+
+        // If the reset time is -1, Then the mine should reset when the reset percentage is reached
+        if (this.resetTime == -1)
+            return this.getPercentageLeft() <= this.resetPercentage;
+
         return (System.currentTimeMillis() - this.lastReset) >= (this.resetTime * 1000) || this.getPercentageLeft() <= this.resetPercentage;
     }
 

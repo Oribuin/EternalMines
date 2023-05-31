@@ -21,12 +21,21 @@ public class EditRegionCommand extends RoseSubCommand {
     }
 
     @RoseExecutable
-    public void execute(@Inject CommandContext context, @Inject Mine mine, World world, Location pos1, Location pos2) {
+    public void execute(@Inject CommandContext context, @Inject Mine mine, Location pos1, Location pos2) {
+
+        if (pos1.getWorld() != mine.getWorld() || pos2.getWorld() != mine.getWorld()) {
+            this.rosePlugin.getManager(LocaleManager.class)
+                    .sendMessage(
+                            context.getSender(),
+                            "command-edit-region-invalid-world",
+                            StringPlaceholders.of("mine", mine.getId())
+                    );
+            return;
+        }
 
         // Set the world of the locations.
-        mine.setWorld(world);
-        pos1.setWorld(world);
-        pos2.setWorld(world);
+        pos1.setWorld(mine.getWorld());
+        pos2.setWorld(mine.getWorld());
         mine.setRegion(new Region(pos1, pos2));
 
         this.rosePlugin.getManager(MineManager.class).saveMine(mine, true);
