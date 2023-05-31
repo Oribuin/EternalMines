@@ -2,8 +2,8 @@
 mine-settings:
   id: 'example' # ID of the mine
   reset-percentage: 20 # Reset mine once 20% of blocks are mined
-  reset-delay: -1 # Delay in seconds before mine resets automatically
-  world: world # World to spawn mine in
+  reset-delay: 300 # Delay in seconds before mine resets automatically
+  world: disabled_world # World to spawn mine in
   spawn: # Teleport player to this location when the mine is reset
     x: 0
     y: 0
