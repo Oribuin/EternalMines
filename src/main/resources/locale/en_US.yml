@@ -48,6 +48,11 @@ command-edit-blocks-remove-invalid: 'The mine [#00B4DB%mine%&f] does not contain
 command-edit-region-invalid-world: 'You need to be in the same world as the mine to set the region'
 command-edit-spawn-invalid: 'Please enter a valid location'
 
+# List Command
+command-list-description: 'List all mines'
+command-list-header: '<g:#00B4DB:#0083B0>&l{{PLUGIN_NAME}} &8| &fAll available mines:'
+command-list-format: '&8 - #00B4DB%mine% &7- &f[#00B4DB%world% | %spawn%&f] &7- &f[#00B4DB%blocks%&f] Blocks'
+
 # Reset Command
 command-reset-description: 'Reset a mine'
 command-reset-success: 'You have reset the mine [#00B4DB%mine%&f]'
