@@ -17,7 +17,7 @@ public class PlayerListeners implements Listener {
         this.manager = manager.getManager(MineManager.class);
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true)
     public void onLogin(PlayerLoginEvent event) {
         Mine mine = this.manager.getMine(event.getPlayer().getLocation());
         if (mine == null) return;

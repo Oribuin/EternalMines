@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -16,9 +15,11 @@ import xyz.oribuin.eternalmines.manager.MineManager;
 import xyz.oribuin.eternalmines.util.MineUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Mine {
 
@@ -77,7 +78,6 @@ public class Mine {
         blocks.keySet().removeIf(material -> !material.isBlock());
 
         this.lastReset = System.currentTimeMillis(); // Set the last reset to the current time
-        this.region.loadBlocksInside(); // Load all the blocks inside the region
 
         this.region.getEntitiesInside().stream()
                 .filter(livingEntity -> livingEntity.getType() == EntityType.PLAYER)
@@ -117,7 +117,7 @@ public class Mine {
     public boolean shouldReset() {
 
         // If the reset time is -1, Then the mine should reset when the reset percentage is reached
-        if (this.resetTime == -1)
+        if (this.resetTime <= 0)
             return this.getPercentageLeft() <= this.resetPercentage;
 
         return (System.currentTimeMillis() - this.lastReset) >= (this.resetTime * 1000) || this.getPercentageLeft() <= this.resetPercentage;
@@ -129,23 +129,21 @@ public class Mine {
      * @return the percentage of blocks left
      */
     public double getPercentageLeft() {
-        List<Block> blocksInMine = this.region.getBlocks();
-        if (blocksInMine.isEmpty()) {
-            // Load all the blocks inside the region
-            this.region.loadBlocksInside();
 
-            // Add all the blocks to the list
-            blocksInMine.addAll(this.region.getBlocks());
+        // Get all the blocks in the mine
+        List<Material> blocksInMine = new ArrayList<>(this.region.getLocations().stream().map(MineUtils::getLazyMaterial).filter(Objects::nonNull).toList());
+
+        if (this.region.getLocations().size() == 0) {
+            this.region.cacheLocations(); // Cache the locations
         }
 
-        int airBlocks = (int) blocksInMine.stream().filter(block -> block == null || block.getType().isAir()).count();
-
-        if (blocksInMine.isEmpty() || airBlocks == blocksInMine.size())
-            return 0.0;
-
+        int airBlocks = (int) blocksInMine.stream().filter(material -> material == Material.AIR).count();
         int totalBlocks = this.region.getTotalBlocks();
+
+        if (blocksInMine.isEmpty() || airBlocks == totalBlocks) return 0.0;
         int blocksLeft = totalBlocks - airBlocks;
-        return Math.round((double) blocksLeft / totalBlocks) * 100.0;
+
+        return Math.round((double) blocksLeft / totalBlocks * 100.0);
     }
 
     /**
@@ -155,10 +153,8 @@ public class Mine {
      */
     public double getPercentageBroken() {
         double percentageLeft = this.getPercentageLeft();
-        if (percentageLeft <= 0.0)
-            return 0.0;
 
-        return 100.0 - percentageLeft;
+        return Math.max(100.0 - percentageLeft, 0.0);
     }
 
     public @NotNull String getId() {

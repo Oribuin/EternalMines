@@ -1,14 +1,16 @@
 package xyz.oribuin.eternalmines.util;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.config.CommentedConfigurationSection;
 import dev.rosewood.rosegarden.utils.HexUtils;
 import dev.rosewood.rosegarden.utils.NMSUtil;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import me.clip.placeholderapi.PlaceholderAPI;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.ChunkSnapshot;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,6 +22,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import xyz.oribuin.eternalmines.EternalMines;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,12 +32,41 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public final class MineUtils {
 
+    private static final Cache<ChunkLocation, ChunkSnapshot> chunkSnapshotCache = CacheBuilder.newBuilder()
+            .expireAfterWrite(1, TimeUnit.SECONDS)
+            .build();
+
     private MineUtils() {
         throw new IllegalStateException("Utility class");
+    }
+
+    /**
+     * Get the chunk snapshot of a location.
+     *
+     * @param location The location
+     * @return The chunk snapshot
+     */
+    public static Material getLazyMaterial(Location location) {
+        World world = location.getWorld();
+        if (world == null || location.getBlockY() < world.getMinHeight() || location.getBlockY() >= world.getMaxHeight())
+            return null;
+
+        try {
+            ChunkLocation pair = new ChunkLocation(location.getWorld().getName(), location.getBlockX() >> 4, location.getBlockZ() >> 4);
+            return chunkSnapshotCache.get(pair, () -> {
+                Chunk chunk = location.getWorld().getChunkAt(location.getBlockX() >> 4, location.getBlockZ() >> 4);
+                return chunk.getChunkSnapshot();
+            }).getBlockType(location.getBlockX() & 15, location.getBlockY(), location.getBlockZ() & 15);
+        } catch (ExecutionException e) {
+            EternalMines.getInstance().getLogger().warning("Failed to fetch block type at " + location);
+            e.printStackTrace();
+            return Material.AIR;
+        }
     }
 
     /**
@@ -429,6 +461,9 @@ public final class MineUtils {
             sb.append(seconds).append("s");
 
         return sb.toString();
+    }
+
+    private record ChunkLocation(String world, int x, int z) {
     }
 
 }

@@ -17,16 +17,43 @@ public class Region {
     private @Nullable Location pos1; // First position of the region
     private @Nullable Location pos2; // Second position of the region
     private int totalBlocks; // Total blocks in the region
-    private List<Block> blocks;
+    private List<Location> locations; // All the locations in the region
 
     public Region(@Nullable Location pos1, @Nullable Location pos2) {
         this.pos1 = pos1;
         this.pos2 = pos2;
-        this.blocks = new ArrayList<>();
+        this.locations = new ArrayList<>();
+        this.cacheLocations(); // Cache the locations
+        this.totalBlocks = this.locations.size();
     }
 
     public Region() {
         this(null, null);
+    }
+
+    public void cacheLocations() {
+        if (this.pos1 == null || this.pos2 == null)
+            return;
+
+        this.locations.clear(); // Clear the locations
+        this.totalBlocks = 0; // Reset the total blocks
+
+        int minX = Math.min(pos1.getBlockX(), pos2.getBlockX());
+        int minY = Math.min(pos1.getBlockY(), pos2.getBlockY());
+        int minZ = Math.min(pos1.getBlockZ(), pos2.getBlockZ());
+
+        int maxX = Math.max(pos1.getBlockX(), pos2.getBlockX());
+        int maxY = Math.max(pos1.getBlockY(), pos2.getBlockY());
+        int maxZ = Math.max(pos1.getBlockZ(), pos2.getBlockZ());
+
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
+                    this.totalBlocks++;
+                    this.locations.add(pos1.getWorld().getBlockAt(x, y, z).getLocation());
+                }
+            }
+        }
     }
 
     /**
@@ -42,15 +69,15 @@ public class Region {
         boolean onlyAir = blocks.isEmpty() || blocks.keySet().stream()
                 .allMatch(material -> material == Material.AIR);
 
+        List<Block> regionBlocks = new ArrayList<>(this.locations.stream().map(Location::getBlock).toList());
         if (onlyAir) {
-            this.blocks.forEach(block -> block.setBlockData(Material.AIR.createBlockData()));
-            this.loadBlocksInside();
+            regionBlocks.forEach(block -> block.setBlockData(Material.AIR.createBlockData()));
             return;
         }
 
         double totalWeight = blocks.values().stream().mapToDouble(Double::doubleValue).sum();
 
-        this.blocks.forEach(block -> {
+        regionBlocks.forEach(block -> {
             double random = Math.random() * totalWeight;
             double weightSum = 0;
 
@@ -62,33 +89,6 @@ public class Region {
                 }
             }
         });
-
-        this.loadBlocksInside(); // Update the blocks inside the region
-    }
-
-    public void loadBlocksInside() {
-        if (pos1 == null || pos2 == null)
-            return;
-
-        List<Block> blocks = new ArrayList<>();
-        int minX = Math.min(pos1.getBlockX(), pos2.getBlockX());
-        int minY = Math.min(pos1.getBlockY(), pos2.getBlockY());
-        int minZ = Math.min(pos1.getBlockZ(), pos2.getBlockZ());
-
-        int maxX = Math.max(pos1.getBlockX(), pos2.getBlockX());
-        int maxY = Math.max(pos1.getBlockY(), pos2.getBlockY());
-        int maxZ = Math.max(pos1.getBlockZ(), pos2.getBlockZ());
-
-        for (int x = minX; x <= maxX; x++) {
-            for (int y = minY; y <= maxY; y++) {
-                for (int z = minZ; z <= maxZ; z++) {
-                    blocks.add(pos1.getWorld().getBlockAt(x, y, z));
-                }
-            }
-        }
-
-        this.blocks = blocks; // Set the blocks to the region
-        this.totalBlocks = blocks.size(); // Set the total blocks in the region
     }
 
     /**
@@ -100,18 +100,7 @@ public class Region {
         if (pos1 == null || pos2 == null)
             return new ArrayList<>();
 
-        List<Chunk> chunks = new ArrayList<>();
-        int minX = Math.min(pos1.getBlockX(), pos2.getBlockX());
-        int minZ = Math.min(pos1.getBlockZ(), pos2.getBlockZ());
-        int maxX = Math.max(pos1.getBlockX(), pos2.getBlockX());
-        int maxZ = Math.max(pos1.getBlockZ(), pos2.getBlockZ());
-
-        for (int x = minX; x <= maxX; x += 16) {
-            for (int z = minZ; z <= maxZ; z += 16) {
-                chunks.add(pos1.getWorld().getChunkAt(x >> 4, z >> 4));
-            }
-        }
-
+        List<Chunk> chunks = new ArrayList<>(this.locations.stream().map(Location::getChunk).distinct().toList());
         List<LivingEntity> entities = new ArrayList<>();
         for (Chunk chunk : chunks) {
             for (Entity entity : chunk.getEntities()) {
@@ -162,6 +151,8 @@ public class Region {
 
     public void setPos1(@Nullable Location pos1) {
         this.pos1 = pos1;
+
+        this.cacheLocations(); // Load the locations
     }
 
     public @Nullable Location getPos2() {
@@ -170,13 +161,16 @@ public class Region {
 
     public void setPos2(@Nullable Location pos2) {
         this.pos2 = pos2;
-    }
 
-    public List<Block> getBlocks() {
-        return this.blocks;
+        this.cacheLocations(); // Load the locations
     }
 
     public int getTotalBlocks() {
         return this.totalBlocks;
     }
+
+    public List<Location> getLocations() {
+        return locations;
+    }
+
 }

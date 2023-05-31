@@ -19,18 +19,9 @@ public class MineListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onBreak(BlockBreakEvent event) {
         Mine mine = this.manager.getMine(event.getBlock().getLocation());
-        if (mine == null) return;
-
-        if (mine.shouldReset()) {
-            mine.reset();
-            return;
+        if (mine != null && mine.shouldReset()) {
+            mine.reset(); // Reset the mine if it should be reset.
         }
-
-        // Remove the block from the mine.
-        int index = mine.getRegion().getBlocks().indexOf(event.getBlock());
-        if (index == -1) return;
-
-        mine.getRegion().getBlocks().set(index, null);
     }
 
 }
