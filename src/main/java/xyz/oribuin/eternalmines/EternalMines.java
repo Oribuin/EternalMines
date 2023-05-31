@@ -26,7 +26,7 @@ public class EternalMines extends RosePlugin {
     }
 
     public EternalMines() {
-        super(-1, -1, ConfigurationManager.class, null, LocaleManager.class, CommandManager.class);
+        super(-1, 18644, ConfigurationManager.class, null, LocaleManager.class, CommandManager.class);
 
         instance = this;
     }
