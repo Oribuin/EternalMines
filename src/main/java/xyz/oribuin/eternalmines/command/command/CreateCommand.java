@@ -29,8 +29,9 @@ public class CreateCommand extends RoseCommand {
             return;
         }
 
-        Mine mine = new Mine(name.toLowerCase(), spawn);
         spawn.setWorld(world);
+
+        Mine mine = new Mine(name.toLowerCase(), spawn);
 
         if (mine.create(this.rosePlugin)) {
             locale.sendMessage(context.getSender(), "command-create-success", StringPlaceholders.of("name", name));

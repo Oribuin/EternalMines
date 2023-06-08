@@ -52,7 +52,7 @@ public class EternalMines extends RosePlugin {
 
         // Register Plugin Tasks.
         if (Setting.RESET_TIMER_ENABLED.getBoolean())
-            new ResetTask(this).runTaskTimerAsynchronously(this, 0L, Setting.RESET_TIMER_INTERVAL.getLong());
+            new ResetTask(this).runTaskTimerAsynchronously(this, 60 * 20L, Setting.RESET_TIMER_INTERVAL.getLong());
     }
 
     @Override

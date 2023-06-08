@@ -9,6 +9,7 @@ import dev.rosewood.rosegarden.command.framework.annotation.RoseExecutable;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import xyz.oribuin.eternalmines.manager.LocaleManager;
 import xyz.oribuin.eternalmines.manager.MineManager;
 import xyz.oribuin.eternalmines.mine.Mine;
@@ -22,21 +23,16 @@ public class EditRegionCommand extends RoseSubCommand {
 
     @RoseExecutable
     public void execute(@Inject CommandContext context, @Inject Mine mine, Location pos1, Location pos2) {
+        Player player = (Player) context.getSender();
 
-        if (pos1.getWorld() != mine.getWorld() || pos2.getWorld() != mine.getWorld()) {
-            this.rosePlugin.getManager(LocaleManager.class)
-                    .sendMessage(
-                            context.getSender(),
-                            "command-edit-region-invalid-world",
-                            StringPlaceholders.of("mine", mine.getId())
-                    );
-            return;
+        if (player.getWorld() != mine.getWorld()) {
+            mine.setWorld(player.getWorld());
+            mine.getRegion().setWorld(player.getWorld());
         }
 
         // Set the world of the locations.
-        pos1.setWorld(mine.getWorld());
-        pos2.setWorld(mine.getWorld());
-        mine.setRegion(new Region(pos1, pos2));
+        mine.getRegion().setPos1(pos1);
+        mine.getRegion().setPos2(pos2);
 
         this.rosePlugin.getManager(MineManager.class).saveMine(mine, true);
         this.rosePlugin.getManager(LocaleManager.class)
@@ -50,6 +46,11 @@ public class EditRegionCommand extends RoseSubCommand {
     @Override
     protected String getDefaultName() {
         return "region";
+    }
+
+    @Override
+    public boolean isPlayerOnly() {
+        return true;
     }
 
 }

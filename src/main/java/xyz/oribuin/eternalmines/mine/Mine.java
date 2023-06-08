@@ -37,7 +37,7 @@ public class Mine {
         this.id = id;
         this.spawn = spawn;
         this.world = spawn.getWorld();
-        this.region = new Region();
+        this.region = new Region(world, null, null); // Create a new region
         this.blocks = new HashMap<>() {{
             this.put(Material.STONE, 100.0);
         }};
@@ -115,7 +115,6 @@ public class Mine {
      * @return true if the mine should be reset
      */
     public boolean shouldReset() {
-
         // If the reset time is -1, Then the mine should reset when the reset percentage is reached
         if (this.resetTime <= 0)
             return this.getPercentageLeft() <= this.resetPercentage;
@@ -171,6 +170,7 @@ public class Mine {
 
     public void setWorld(@NotNull World world) {
         this.world = world;
+        this.region.setWorld(world);
     }
 
     public void setSpawn(@NotNull Location spawn) {

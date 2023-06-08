@@ -1,8 +1,10 @@
 package xyz.oribuin.eternalmines.mine;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -14,12 +16,14 @@ import java.util.Map;
 
 public class Region {
 
+    private @Nullable World world;
     private @Nullable Location pos1; // First position of the region
     private @Nullable Location pos2; // Second position of the region
     private int totalBlocks; // Total blocks in the region
-    private List<Location> locations; // All the locations in the region
+    private final List<Location> locations; // All the locations in the region
 
-    public Region(@Nullable Location pos1, @Nullable Location pos2) {
+    public Region(@Nullable World world, @Nullable Location pos1, @Nullable Location pos2) {
+        this.world = world;
         this.pos1 = pos1;
         this.pos2 = pos2;
         this.locations = new ArrayList<>();
@@ -28,11 +32,11 @@ public class Region {
     }
 
     public Region() {
-        this(null, null);
+        this(null, null, null);
     }
 
     public void cacheLocations() {
-        if (this.pos1 == null || this.pos2 == null)
+        if (this.world == null || this.pos1 == null || this.pos2 == null)
             return;
 
         this.locations.clear(); // Clear the locations
@@ -50,7 +54,7 @@ public class Region {
             for (int y = minY; y <= maxY; y++) {
                 for (int z = minZ; z <= maxZ; z++) {
                     this.totalBlocks++;
-                    this.locations.add(pos1.getWorld().getBlockAt(x, y, z).getLocation());
+                    this.locations.add(this.world.getBlockAt(x, y, z).getLocation());
                 }
             }
         }
@@ -62,7 +66,7 @@ public class Region {
      * @param blocks The blocks to fill the region with
      */
     public void fill(Map<Material, Double> blocks) {
-        if (this.pos1 == null || this.pos2 == null)
+        if (this.world == null || this.pos1 == null || this.pos2 == null)
             return;
 
         // Check if the blocks map is empty or if all the blocks are air
@@ -171,6 +175,16 @@ public class Region {
 
     public List<Location> getLocations() {
         return locations;
+    }
+
+    public @Nullable World getWorld() {
+        return world;
+    }
+
+    public void setWorld(@Nullable World world) {
+        this.world = world;
+
+        this.cacheLocations(); // Load the locations
     }
 
 }

@@ -15,10 +15,10 @@ public class ResetTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        this.manager.getMines().values()
-                .stream()
-                .filter(Mine::shouldReset)
-                .forEach(Mine::reset);
+        for (Mine mine : this.manager.getMines().values()) {
+            if (mine.shouldReset())
+                mine.reset();
+        }
     }
 
 }

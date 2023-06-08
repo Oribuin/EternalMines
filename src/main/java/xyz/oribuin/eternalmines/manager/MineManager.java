@@ -103,6 +103,7 @@ public class MineManager extends Manager {
 
             region.setPos1(pos1);
             region.setPos2(pos2);
+            region.setWorld(world);
         }
 
         // Load blocks of the mine
@@ -156,7 +157,7 @@ public class MineManager extends Manager {
             settings.set("id", mine.getId());
             settings.set("reset-percentage", mine.getResetPercentage());
             settings.set("reset-delay", mine.getResetTime());
-            settings.set("world", mine.getWorld());
+            settings.set("world", mine.getWorld().getName());
 
             // Set the spawn location of the mine
             if (mine.getSpawn().getWorld() != null) {
