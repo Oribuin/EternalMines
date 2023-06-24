@@ -22,7 +22,7 @@ public class EternalMines extends RosePlugin {
     private static EternalMines instance;
 
     public EternalMines() {
-        super(-1, 18644, ConfigurationManager.class, null, LocaleManager.class, CommandManager.class);
+        super(110719, 18644, ConfigurationManager.class, null, LocaleManager.class, CommandManager.class);
 
         instance = this;
     }
