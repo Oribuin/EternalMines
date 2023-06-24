@@ -1,8 +1,11 @@
 package xyz.oribuin.eternalmines.listener;
 
 import dev.rosewood.rosegarden.utils.NMSUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import xyz.oribuin.eternalmines.EternalMines;
 import xyz.oribuin.eternalmines.manager.MineManager;
@@ -16,8 +19,8 @@ public class PlayerListeners implements Listener {
         this.manager = manager.getManager(MineManager.class);
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onLogin(PlayerLoginEvent event) {
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    public void onLogin(PlayerJoinEvent event) {
         Mine mine = this.manager.getMine(event.getPlayer().getLocation());
         if (mine == null) return;
 
