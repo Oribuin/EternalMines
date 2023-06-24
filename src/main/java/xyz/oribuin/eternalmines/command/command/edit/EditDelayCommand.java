@@ -33,7 +33,7 @@ public class EditDelayCommand extends RoseSubCommand {
 
     @Override
     protected String getDefaultName() {
-        return "percentage";
+        return "delay";
     }
 
 }
