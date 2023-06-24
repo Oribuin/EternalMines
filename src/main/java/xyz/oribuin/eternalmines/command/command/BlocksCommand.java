@@ -1,11 +1,15 @@
 package xyz.oribuin.eternalmines.command.command;
 
 import dev.rosewood.rosegarden.RosePlugin;
+import dev.rosewood.rosegarden.command.framework.CommandContext;
 import dev.rosewood.rosegarden.command.framework.RoseCommand;
 import dev.rosewood.rosegarden.command.framework.RoseCommandWrapper;
-import xyz.oribuin.eternalmines.command.command.blocks.BlocksRemoveCommand;
+import dev.rosewood.rosegarden.command.framework.RoseSubCommand;
+import dev.rosewood.rosegarden.command.framework.annotation.RoseExecutable;
 import xyz.oribuin.eternalmines.command.command.blocks.BlocksClearCommand;
+import xyz.oribuin.eternalmines.command.command.blocks.BlocksRemoveCommand;
 import xyz.oribuin.eternalmines.command.command.blocks.BlocksSetCommand;
+import xyz.oribuin.eternalmines.mine.Mine;
 
 public class BlocksCommand extends RoseCommand {
 
@@ -15,6 +19,11 @@ public class BlocksCommand extends RoseCommand {
                 BlocksClearCommand.class,
                 BlocksSetCommand.class
         );
+    }
+
+    @RoseExecutable
+    public void execute(CommandContext context, Mine mine, RoseSubCommand command) {
+        // Empty
     }
 
     @Override

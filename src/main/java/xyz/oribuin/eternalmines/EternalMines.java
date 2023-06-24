@@ -34,8 +34,9 @@ public class EternalMines extends RosePlugin {
     @Override
     public void enable() {
         // Register PlaceholderAPI
-        if (this.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI"))
+        if (this.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new MineExpansion(this).register();
+        }
     }
 
 
@@ -44,6 +45,8 @@ public class EternalMines extends RosePlugin {
         super.reload();
 
         PluginManager pluginManager = this.getServer().getPluginManager();
+        HandlerList.unregisterAll(this); // Unregister all listeners.
+
         if (Setting.LISTENERS_BREAK_BLOCK.getBoolean())
             pluginManager.registerEvents(new MineListener(this), this);
 
