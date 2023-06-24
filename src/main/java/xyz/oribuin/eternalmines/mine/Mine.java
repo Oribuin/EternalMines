@@ -71,8 +71,10 @@ public class Mine {
             return false;
 
         Map<Material, Double> blocks = new HashMap<>(this.blocks);
-        if (this.blocks.isEmpty())
-            blocks.put(Material.AIR, 100.0);
+        if (this.blocks.isEmpty() || this.blocks.keySet().stream().allMatch(material -> material == Material.AIR)) {
+            this.lastReset = System.currentTimeMillis(); // Set the last reset to the current time
+            return true;
+        }
 
         // Remove all non-block materials
         blocks.keySet().removeIf(material -> !material.isBlock());
