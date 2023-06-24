@@ -29,7 +29,7 @@ public class Mine {
     private @NotNull Region region; // Region of the mine (Where players can mine)
     private @NotNull Map<Material, Double> blocks; // Block material and chance to spawn
     private double resetPercentage; // % of blocks that need to be mined to reset the mine
-    private long resetTime; // (Time in milliseconds) Delay between the mine resets
+    private long resetDelay; // (Time in milliseconds) Delay between the mine resets
     private long lastReset; // (Time in milliseconds) Last time the mine was reset
     private @Nullable File cachedFile; // Cached file of the mine
 
@@ -43,7 +43,7 @@ public class Mine {
         }};
         this.resetPercentage = 20;
         this.lastReset = System.currentTimeMillis();
-        this.resetTime = 300;
+        this.resetDelay = 300;
         this.cachedFile = null;
     }
 
@@ -106,7 +106,7 @@ public class Mine {
      * @return the time left in milliseconds
      */
     public long getResetTimeLeft() {
-        return (this.lastReset + (this.resetTime * 1000)) - System.currentTimeMillis();
+        return (this.lastReset + (this.resetDelay * 1000)) - System.currentTimeMillis();
     }
 
     /**
@@ -116,10 +116,10 @@ public class Mine {
      */
     public boolean shouldReset() {
         // If the reset time is -1, Then the mine should reset when the reset percentage is reached
-        if (this.resetTime <= 0 && this.resetPercentage >= 0)
+        if (this.resetDelay <= 0 && this.resetPercentage >= 0)
             return this.getPercentageLeft() <= this.resetPercentage;
 
-        return (System.currentTimeMillis() - this.lastReset) >= (this.resetTime * 1000) || (this.resetPercentage >= 0 && this.getPercentageLeft() <= this.resetPercentage);
+        return (System.currentTimeMillis() - this.lastReset) >= (this.resetDelay * 1000) || (this.resetPercentage >= 0 && this.getPercentageLeft() <= this.resetPercentage);
     }
 
     /**
@@ -210,11 +210,11 @@ public class Mine {
     }
 
     public long getResetTime() {
-        return this.resetTime;
+        return this.resetDelay;
     }
 
     public void setResetTime(long resetTime) {
-        this.resetTime = resetTime;
+        this.resetDelay = resetTime;
     }
 
     public @Nullable File getCachedFile() {

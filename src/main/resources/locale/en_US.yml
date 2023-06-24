@@ -47,6 +47,7 @@ command-delete-doesnt-exist: 'The mine you have provided does not exist.'
 
 # Edit Command
 command-edit-description: 'Edit a mine''s values'
+command-edit-delay-success: 'You have successfully set the reset delay of the mine [#00B4DB%mine%&f] to [#00B4DB%delay%&fs]'
 command-edit-percentage-success: 'You have successfully set the reset percentage of the mine [#00B4DB%mine%&f] to [#00B4DB%percentage%%&f]'
 command-edit-region-success: 'You have successfully set the region of the mine [#00B4DB%mine%&f]'
 command-edit-spawn-success: 'You have successfully set the spawn of the mine [#00B4DB%mine%&f] to [#00B4DB%location%&f]'
