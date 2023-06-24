@@ -26,6 +26,15 @@ command-help-list-description-no-args: '&8 - #00B4DB/%cmd% %subcmd% &7- %desc%'
 command-reload-description: 'Reloads the plugin.'
 command-reload-reloaded: 'Configuration and locale files were reloaded'
 
+# Blocks Command
+command-blocks-description: 'Edit the blocks of a mine'
+command-blocks-remove-success: 'You have successfully removed #00B4DB%material%&f from the mine [#00B4DB%mine%&f]'
+command-blocks-remove-invalid: 'The mine [#00B4DB%mine%&f] does not contain the material [#00B4DB%material%&f]'
+command-blocks-clear-success: 'You have successfully reset the blocks of the mine [#00B4DB%mine%&f]'
+command-blocks-clear-confirm: 'Type the command again to clear all blocks in the mine [#00B4DB%mine%&f] (This cannot be undone)'
+command-blocks-set-success: 'You have successfully set #00B4DB%material% &f[#00B4DB%percentage%%&f] to the mine [#00B4DB%mine%&f]'
+command-blocks-set-invalid: 'Please enter a percentage between 0.0 and 100.0'
+
 # Create Command
 command-create-description: 'Create a new mine'
 command-create-success: 'You have created the mine [%mine%]'
@@ -38,12 +47,9 @@ command-delete-doesnt-exist: 'The mine you have provided does not exist.'
 
 # Edit Command
 command-edit-description: 'Edit a mine''s values'
-command-edit-blocks-set-success: 'You have successfully set #00B4DB%material% &f[#00B4DB%percentage%%&f] to the mine [#00B4DB%mine%&f]'
-command-edit-percentage-success: 'You have successfully set the percentage of the mine [#00B4DB%mine%&f] to [#00B4DB%percentage%%&f]'
+command-edit-percentage-success: 'You have successfully set the reset percentage of the mine [#00B4DB%mine%&f] to [#00B4DB%percentage%%&f]'
 command-edit-region-success: 'You have successfully set the region of the mine [#00B4DB%mine%&f]'
 command-edit-spawn-success: 'You have successfully set the spawn of the mine [#00B4DB%mine%&f] to [#00B4DB%location%&f]'
-command-edit-blocks-remove-success: 'You have successfully removed #00B4DB%material%&f from the mine [#00B4DB%mine%&f]'
-command-edit-blocks-set-invalid: 'Please enter a percentage between 0.0 and 100.0'
 command-edit-region-invalid-world: 'You need to be in the same world as the mine to set the region'
 command-edit-spawn-invalid: 'Please enter a valid location'
 

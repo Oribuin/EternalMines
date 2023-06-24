@@ -6,7 +6,6 @@ import dev.rosewood.rosegarden.command.framework.RoseCommand;
 import dev.rosewood.rosegarden.command.framework.RoseCommandWrapper;
 import dev.rosewood.rosegarden.command.framework.RoseSubCommand;
 import dev.rosewood.rosegarden.command.framework.annotation.RoseExecutable;
-import xyz.oribuin.eternalmines.command.command.edit.EditBlocksCommand;
 import xyz.oribuin.eternalmines.command.command.edit.EditPercentageCommand;
 import xyz.oribuin.eternalmines.command.command.edit.EditRegionCommand;
 import xyz.oribuin.eternalmines.command.command.edit.EditSpawnCommand;
@@ -16,7 +15,6 @@ public class EditCommand extends RoseCommand {
 
     public EditCommand(RosePlugin rosePlugin, RoseCommandWrapper parent) {
         super(rosePlugin, parent,
-                EditBlocksCommand.class,
                 EditPercentageCommand.class,
                 EditRegionCommand.class,
                 EditSpawnCommand.class
