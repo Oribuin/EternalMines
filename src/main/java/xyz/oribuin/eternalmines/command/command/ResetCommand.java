@@ -38,7 +38,7 @@ public class ResetCommand extends RoseCommand {
 
     @Override
     protected List<String> getDefaultAliases() {
-        return List.of("restart");
+        return List.of();
     }
 
     @Override

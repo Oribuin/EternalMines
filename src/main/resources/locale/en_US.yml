@@ -9,8 +9,8 @@ unknown-command-error: '&cAn unknown error occurred; details have been printed t
 invalid-subcommand: 'Invalid subcommand.'
 invalid-argument: 'Invalid argument: %message%.'
 invalid-argument-null: 'Invalid argument: %name% was null.'
-missing-arguments: 'Missing arguments, &b%amount% &crequired.'
-missing-arguments-extra: 'Missing arguments, &b%amount%+ &crequired.'
+missing-arguments: 'Missing arguments, &b%amount% &frequired.'
+missing-arguments-extra: 'Missing arguments, &b%amount%+ &frequired.'
 
 # Base Command Message
 base-command-color: '#00B4DB'
@@ -37,7 +37,7 @@ command-blocks-set-invalid: 'Please enter a percentage between 0.0 and 100.0'
 
 # Create Command
 command-create-description: 'Create a new mine'
-command-create-success: 'You have created the mine [%mine%]'
+command-create-success: 'You have created the mine [#00B4DB%mine%&f]'
 command-create-already-exists: 'The mine you have tried to create already exists.'
 
 # Delete Command

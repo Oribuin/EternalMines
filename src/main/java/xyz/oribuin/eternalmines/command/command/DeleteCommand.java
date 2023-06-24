@@ -30,7 +30,7 @@ public class DeleteCommand extends RoseCommand {
         }
 
         if (manager.deleteMine(mine.getId())) {
-            locale.sendMessage(context.getSender(), "command-delete-success", StringPlaceholders.of("name", name));
+            locale.sendMessage(context.getSender(), "command-delete-success", StringPlaceholders.of("mine", name));
             return;
         }
 

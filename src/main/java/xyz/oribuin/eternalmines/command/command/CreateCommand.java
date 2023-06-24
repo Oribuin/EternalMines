@@ -34,7 +34,7 @@ public class CreateCommand extends RoseCommand {
         Mine mine = new Mine(name.toLowerCase(), spawn);
 
         if (mine.create(this.rosePlugin)) {
-            locale.sendMessage(context.getSender(), "command-create-success", StringPlaceholders.of("name", name));
+            locale.sendMessage(context.getSender(), "command-create-success", StringPlaceholders.of("mine", name));
             return;
         }
 
