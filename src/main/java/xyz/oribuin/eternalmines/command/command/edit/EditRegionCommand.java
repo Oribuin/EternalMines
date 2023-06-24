@@ -8,12 +8,10 @@ import dev.rosewood.rosegarden.command.framework.annotation.Inject;
 import dev.rosewood.rosegarden.command.framework.annotation.RoseExecutable;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import xyz.oribuin.eternalmines.manager.LocaleManager;
 import xyz.oribuin.eternalmines.manager.MineManager;
 import xyz.oribuin.eternalmines.mine.Mine;
-import xyz.oribuin.eternalmines.mine.Region;
 
 public class EditRegionCommand extends RoseSubCommand {
 

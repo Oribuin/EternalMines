@@ -21,14 +21,14 @@ public class EternalMines extends RosePlugin {
 
     private static EternalMines instance;
 
-    public static EternalMines getInstance() {
-        return instance;
-    }
-
     public EternalMines() {
         super(-1, 18644, ConfigurationManager.class, null, LocaleManager.class, CommandManager.class);
 
         instance = this;
+    }
+
+    public static EternalMines getInstance() {
+        return instance;
     }
 
     @Override

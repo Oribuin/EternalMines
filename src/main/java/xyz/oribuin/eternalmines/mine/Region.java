@@ -1,6 +1,5 @@
 package xyz.oribuin.eternalmines.mine;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,11 +15,11 @@ import java.util.Map;
 
 public class Region {
 
+    private final List<Location> locations; // All the locations in the region
     private @Nullable World world;
     private @Nullable Location pos1; // First position of the region
     private @Nullable Location pos2; // Second position of the region
     private int totalBlocks; // Total blocks in the region
-    private final List<Location> locations; // All the locations in the region
 
     public Region(@Nullable World world, @Nullable Location pos1, @Nullable Location pos2) {
         this.world = world;

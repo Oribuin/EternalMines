@@ -8,7 +8,6 @@ import dev.rosewood.rosegarden.command.framework.annotation.Inject;
 import dev.rosewood.rosegarden.command.framework.annotation.Optional;
 import dev.rosewood.rosegarden.command.framework.annotation.RoseExecutable;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -39,7 +38,7 @@ public class EditSpawnCommand extends RoseSubCommand {
 
         spawn.setWorld(world);
         mine.setSpawn(spawn);
-        
+
         this.rosePlugin.getManager(MineManager.class).saveMine(mine, true);
         locale.sendMessage(context.getSender(), "command-edit-spawn-success", StringPlaceholders.of(
                 "mine", mine.getId(),

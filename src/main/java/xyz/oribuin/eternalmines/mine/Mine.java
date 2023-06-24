@@ -78,7 +78,6 @@ public class Mine {
         blocks.keySet().removeIf(material -> !material.isBlock());
 
         this.lastReset = System.currentTimeMillis(); // Set the last reset to the current time
-
         this.region.getEntitiesInside().stream()
                 .filter(livingEntity -> livingEntity.getType() == EntityType.PLAYER)
                 .forEach(livingEntity -> {
@@ -164,6 +163,10 @@ public class Mine {
         return this.spawn;
     }
 
+    public void setSpawn(@NotNull Location spawn) {
+        this.spawn = spawn;
+    }
+
     public @NotNull World getWorld() {
         return this.world;
     }
@@ -171,10 +174,6 @@ public class Mine {
     public void setWorld(@NotNull World world) {
         this.world = world;
         this.region.setWorld(world);
-    }
-
-    public void setSpawn(@NotNull Location spawn) {
-        this.spawn = spawn;
     }
 
     public @NotNull Region getRegion() {

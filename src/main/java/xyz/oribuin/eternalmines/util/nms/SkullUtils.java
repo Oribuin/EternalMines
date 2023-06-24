@@ -24,7 +24,7 @@ public final class SkullUtils {
      * Applies a base64 encoded texture to an item's SkullMeta
      *
      * @param skullMeta The ItemMeta for the Skull
-     * @param texture The texture to apply to the skull
+     * @param texture   The texture to apply to the skull
      */
     public static void setSkullTexture(SkullMeta skullMeta, String texture) {
         if (texture == null || texture.isEmpty())

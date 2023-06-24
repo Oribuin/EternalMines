@@ -2,7 +2,6 @@ package xyz.oribuin.eternalmines.listener;
 
 import dev.rosewood.rosegarden.utils.NMSUtil;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import xyz.oribuin.eternalmines.EternalMines;

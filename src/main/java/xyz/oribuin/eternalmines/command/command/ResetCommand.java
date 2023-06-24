@@ -5,9 +5,7 @@ import dev.rosewood.rosegarden.command.framework.CommandContext;
 import dev.rosewood.rosegarden.command.framework.RoseCommand;
 import dev.rosewood.rosegarden.command.framework.RoseCommandWrapper;
 import dev.rosewood.rosegarden.command.framework.annotation.RoseExecutable;
-import dev.rosewood.rosegarden.utils.NMSUtil;
 import dev.rosewood.rosegarden.utils.StringPlaceholders;
-import org.bukkit.entity.Player;
 import xyz.oribuin.eternalmines.manager.LocaleManager;
 import xyz.oribuin.eternalmines.mine.Mine;
 
