@@ -3,6 +3,7 @@ package xyz.oribuin.eternalmines;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.manager.Manager;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
 import xyz.oribuin.eternalmines.hook.MineExpansion;
@@ -13,7 +14,6 @@ import xyz.oribuin.eternalmines.manager.ConfigurationManager;
 import xyz.oribuin.eternalmines.manager.ConfigurationManager.Setting;
 import xyz.oribuin.eternalmines.manager.LocaleManager;
 import xyz.oribuin.eternalmines.manager.MineManager;
-import xyz.oribuin.eternalmines.task.ResetTask;
 
 import java.util.List;
 
@@ -54,14 +54,24 @@ public class EternalMines extends RosePlugin {
             pluginManager.registerEvents(new PlayerListeners(this), this);
 
         // Register Plugin Tasks.
-        if (Setting.RESET_TIMER_ENABLED.getBoolean())
-            new ResetTask(this).runTaskTimerAsynchronously(this, 60 * 20L, Setting.RESET_TIMER_INTERVAL.getLong());
+        if (Setting.RESET_TIMER_ENABLED.getBoolean()) {
+            this.getManager(MineManager.class).getMines().values()
+                    .forEach(mine -> {
+                        List<Chunk> chunks = mine.getChunks();
+                        if (chunks.isEmpty()) return;
+
+                        chunks.forEach(chunk -> Bukkit.getRegionScheduler()
+                                .runAtFixedRate(this, chunk.getWorld(), chunk.getX(), chunk.getZ(), task -> {
+                                    if (mine.shouldReset())
+                                        mine.reset();
+                                }, 60, Setting.RESET_TIMER_INTERVAL.getLong()));
+                    });
+        }
     }
 
     @Override
     public void disable() {
-        HandlerList.unregisterAll(this); // Unregister all listeners.
-        Bukkit.getScheduler().cancelTasks(this);
+        Bukkit.getAsyncScheduler().cancelTasks(this);
     }
 
     @Override

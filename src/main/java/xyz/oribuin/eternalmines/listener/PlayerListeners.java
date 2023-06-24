@@ -24,10 +24,7 @@ public class PlayerListeners implements Listener {
         Mine mine = this.manager.getMine(event.getPlayer().getLocation());
         if (mine == null) return;
 
-        if (NMSUtil.isPaper())
-            event.getPlayer().teleportAsync(mine.getSpawn());
-        else
-            event.getPlayer().teleport(mine.getSpawn());
+        event.getPlayer().teleportAsync(mine.getSpawn());
     }
 
 }

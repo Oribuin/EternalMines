@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "xyz.oribuin"
-version = "1.0.0"
+version = "folia-1.0.0"
 
 java {
     toolchain {
@@ -36,7 +36,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly "io.papermc.paper:paper-api:${spigotVersion}-R0.1-SNAPSHOT"
+    compileOnly "dev.folia:folia-api:${spigotVersion}-R0.1-SNAPSHOT"
     compileOnly "org.jetbrains:annotations:23.0.0"
 
     // Plugin Dependencies

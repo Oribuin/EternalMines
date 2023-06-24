@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 public final class MineUtils {
 
@@ -57,14 +58,8 @@ public final class MineUtils {
             return null;
 
         try {
-            ChunkLocation pair = new ChunkLocation(location.getWorld().getName(), location.getBlockX() >> 4, location.getBlockZ() >> 4);
-            return chunkSnapshotCache.get(pair, () -> {
-                Chunk chunk = location.getWorld().getChunkAt(location.getBlockX() >> 4, location.getBlockZ() >> 4);
-                return chunk.getChunkSnapshot();
-            }).getBlockType(location.getBlockX() & 15, location.getBlockY(), location.getBlockZ() & 15);
-        } catch (ExecutionException e) {
-            EternalMines.getInstance().getLogger().warning("Failed to fetch block type at " + location);
-            e.printStackTrace();
+            return location.getBlock().getType();
+        } catch (Exception ignored) {
             return Material.AIR;
         }
     }

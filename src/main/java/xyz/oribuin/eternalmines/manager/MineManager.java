@@ -79,7 +79,7 @@ public class MineManager extends Manager {
         String worldName = settings.getString("world", "");
         World world = Bukkit.getWorld(worldName); // World of the mine
         if (world == null) {
-            this.rosePlugin.getLogger().severe("Unable to load mine world from " + file.getName() + " (World: " + worldName + " does not exist)");
+            this.rosePlugin.getLogger().warning("Unable to load mine world from " + file.getName() + " (World: " + worldName + " does not exist)");
             return null;
         }
 

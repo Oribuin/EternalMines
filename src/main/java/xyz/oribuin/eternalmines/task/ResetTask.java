@@ -1,11 +1,10 @@
 package xyz.oribuin.eternalmines.task;
 
-import org.bukkit.scheduler.BukkitRunnable;
 import xyz.oribuin.eternalmines.EternalMines;
 import xyz.oribuin.eternalmines.manager.MineManager;
 import xyz.oribuin.eternalmines.mine.Mine;
 
-public class ResetTask extends BukkitRunnable {
+public class ResetTask implements Runnable {
 
     private final MineManager manager;
 
@@ -20,5 +19,4 @@ public class ResetTask extends BukkitRunnable {
                 mine.reset();
         }
     }
-
 }

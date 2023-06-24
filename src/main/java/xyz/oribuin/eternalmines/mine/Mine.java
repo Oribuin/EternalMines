@@ -3,6 +3,7 @@ package xyz.oribuin.eternalmines.mine;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.utils.NMSUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -70,6 +71,9 @@ public class Mine {
         if (this.region.getPos1() == null || this.region.getPos2() == null)
             return false;
 
+        // If the mine has no blocks or all blocks have a chance of 0, Then reset the mine
+        this.blocks.entrySet().removeIf(entry -> entry.getValue() <= 0 || entry.getKey() == Material.AIR); // Remove all blocks with a chance of 0
+
         Map<Material, Double> blocks = new HashMap<>(this.blocks);
         if (this.blocks.isEmpty() || this.blocks.keySet().stream().allMatch(material -> material == Material.AIR)) {
             this.lastReset = System.currentTimeMillis(); // Set the last reset to the current time
@@ -77,24 +81,15 @@ public class Mine {
         }
 
         // Remove all non-block materials
-        blocks.keySet().removeIf(material -> !material.isBlock());
-
         this.lastReset = System.currentTimeMillis(); // Set the last reset to the current time
         this.region.getEntitiesInside().stream()
                 .filter(livingEntity -> livingEntity.getType() == EntityType.PLAYER)
-                .forEach(livingEntity -> {
-                    Player player = (Player) livingEntity;
-
-                    // Teleport the player to the spawn
-                    if (NMSUtil.isPaper())
-                        player.teleportAsync(this.spawn);
-                    else
-                        player.teleport(this.spawn);
-                });
+                .map(livingEntity -> (Player) livingEntity)
+                .forEach(player -> player.teleportAsync(this.spawn));
 
         // Fill the region with the blocks, cannot be run async due to Bukkit API
         // TODO: Optimize this to use a cuboid region iterator
-        Bukkit.getScheduler().runTask(EternalMines.getInstance(), () -> this.region.fill(blocks));
+        this.region.fill(blocks);
         EternalMines.getInstance().getManager(MineManager.class).saveMine(this, false); // Save the mine
 
         return true;
@@ -131,7 +126,8 @@ public class Mine {
     public double getPercentageLeft() {
 
         // Get all the blocks in the mine
-        List<Material> blocksInMine = new ArrayList<>(this.region.getLocations().stream().map(MineUtils::getLazyMaterial).filter(Objects::nonNull).toList());
+        // TODO: Fix captureTreeGeneration NullPointerException with Block#getType()
+        List<Material> blocksInMine = new ArrayList<>(this.region.getLocations().stream().map(location -> location.getBlock().getType()).toList());
 
         if (this.region.getLocations().size() == 0) {
             this.region.cacheLocations(); // Cache the locations
@@ -155,6 +151,10 @@ public class Mine {
         double percentageLeft = this.getPercentageLeft();
 
         return Math.max(100.0 - percentageLeft, 0.0);
+    }
+
+    public List<Chunk> getChunks() {
+        return this.region.getLocations().stream().map(Location::getChunk).distinct().toList();
     }
 
     public @NotNull String getId() {

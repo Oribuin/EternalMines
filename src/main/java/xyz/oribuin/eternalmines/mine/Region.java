@@ -1,13 +1,14 @@
 package xyz.oribuin.eternalmines.mine;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
+import xyz.oribuin.eternalmines.EternalMines;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,26 +73,22 @@ public class Region {
         boolean onlyAir = blocks.isEmpty() || blocks.keySet().stream()
                 .allMatch(material -> material == Material.AIR);
 
-        List<Block> regionBlocks = new ArrayList<>(this.locations.stream().map(Location::getBlock).toList());
-        if (onlyAir) {
-            regionBlocks.forEach(block -> block.setBlockData(Material.AIR.createBlockData()));
-            return;
-        }
+        if (onlyAir) return;
 
         double totalWeight = blocks.values().stream().mapToDouble(Double::doubleValue).sum();
 
-        regionBlocks.forEach(block -> {
+        locations.forEach(location -> Bukkit.getRegionScheduler().run(EternalMines.getInstance(), location, task -> {
             double random = Math.random() * totalWeight;
             double weightSum = 0;
 
             for (Map.Entry<Material, Double> entry : blocks.entrySet()) {
                 weightSum += entry.getValue();
                 if (random <= weightSum) {
-                    block.setType(entry.getKey());
+                    location.getBlock().setType(entry.getKey());
                     break;
                 }
             }
-        });
+        }));
     }
 
     /**
