@@ -10,6 +10,7 @@ description: A simple bloat-free plugin to create prison mines.
 #  - "net.kyori:adventure-text-serializer-gson:4.11.0"
 softdepend:
   - PlaceholderAPI
+  - HeadDatabase
 permissions:
   eternalmines.*:
     description: Allows access to all EternalMines commands
