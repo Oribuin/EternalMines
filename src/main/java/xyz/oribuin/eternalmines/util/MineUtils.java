@@ -445,6 +445,8 @@ public final class MineUtils {
      * @return String in format xh xm xs format
      */
     public static String convertMilliSecondsToHMmSs(long milliseconds) {
+        if ((milliseconds / 1000) < 1)
+            return "0s";
 
         long hours = TimeUnit.MILLISECONDS.toHours(milliseconds);
         long minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds) % TimeUnit.HOURS.toMinutes(1);
