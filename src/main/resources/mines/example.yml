@@ -20,5 +20,5 @@ mine-settings:
       y: 10
       z: 10
   blocks: # List of blocks to spawn in the mine and their percentages
-    STONE: 75 # 75% chance to spawn stone
-    COBBLESTONE: 25 # 25% chance to spawn cobblestone
+    STONE: 75.0 # 75% chance to spawn stone
+    COBBLESTONE: 25.0 # 25% chance to spawn cobblestone
