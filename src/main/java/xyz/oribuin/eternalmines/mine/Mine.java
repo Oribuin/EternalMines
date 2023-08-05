@@ -93,7 +93,6 @@ public class Mine {
                 });
 
         // Fill the region with the blocks, cannot be run async due to Bukkit API
-        // TODO: Optimize this to use a cuboid region iterator
         Bukkit.getScheduler().runTask(EternalMines.getInstance(), () -> this.region.fill(blocks));
         EternalMines.getInstance().getManager(MineManager.class).saveMine(this, false); // Save the mine
 

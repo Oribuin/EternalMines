@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
@@ -68,30 +69,25 @@ public class Region {
         if (this.world == null || this.pos1 == null || this.pos2 == null)
             return;
 
-        // Check if the blocks map is empty or if all the blocks are air
-        boolean onlyAir = blocks.isEmpty() || blocks.keySet().stream()
-                .allMatch(material -> material == Material.AIR);
-
-        List<Block> regionBlocks = new ArrayList<>(this.locations.stream().map(Location::getBlock).toList());
-        if (onlyAir) {
-            regionBlocks.forEach(block -> block.setBlockData(Material.AIR.createBlockData()));
+        // Don't bother if the blocks are empty or all air
+        if (blocks.isEmpty() || blocks.keySet().stream().allMatch(Material::isAir))
             return;
-        }
 
-        double totalWeight = blocks.values().stream().mapToDouble(Double::doubleValue).sum();
+        final double totalWeight = blocks.values().stream().mapToDouble(Double::doubleValue).sum();
 
-        regionBlocks.forEach(block -> {
-            double random = Math.random() * totalWeight;
+        for (final Block block : this.locations.stream().map(Location::getBlock).toList()) {
+            final double random = Math.random() * totalWeight;
             double weightSum = 0;
 
-            for (Map.Entry<Material, Double> entry : blocks.entrySet()) {
+            for (final Map.Entry<Material, Double> entry : blocks.entrySet()) {
                 weightSum += entry.getValue();
                 if (random <= weightSum) {
-                    block.setType(entry.getKey());
+                    block.setBlockData(entry.getKey().createBlockData(), false);
                     break;
                 }
             }
-        });
+        }
+
     }
 
     /**
