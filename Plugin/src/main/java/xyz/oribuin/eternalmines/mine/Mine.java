@@ -115,7 +115,7 @@ public class Mine {
         }
 
         // Fill the region with the blocks, cannot be run async due to Bukkit API
-        Bukkit.getScheduler().runTask(EternalMines.getInstance(), () -> this.region.fill(blocks));
+        Bukkit.getScheduler().runTaskAsynchronously(EternalMines.getInstance(), () -> this.region.fill(blocks));
         EternalMines.getInstance().getManager(MineManager.class).saveMine(this, false); // Save the mine
         return true;
     }
@@ -150,7 +150,7 @@ public class Mine {
     public double getPercentageLeft() {
 
         // Get all the blocks in the mine
-        List<Material> blocksInMine = new ArrayList<>(this.region.getLocations().stream().map(MineUtils::getLazyMaterial).filter(Objects::nonNull).toList());
+        List<Material> blocksInMine = new ArrayList<>(this.region.getLocations().stream().map(MineUtils::getLazyMaterial).toList());
 
         if (this.region.getLocations().size() == 0) {
             this.region.cacheLocations(); // Cache the locations

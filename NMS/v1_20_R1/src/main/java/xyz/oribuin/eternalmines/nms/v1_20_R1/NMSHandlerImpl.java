@@ -1,22 +1,16 @@
 package xyz.oribuin.eternalmines.nms.v1_20_R1;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
-import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_20_R1.util.CraftMagicNumbers;
-import org.bukkit.entity.Player;
 import xyz.oribuin.eternalmines.nms.NMSHandler;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class NMSHandlerImpl implements NMSHandler {
