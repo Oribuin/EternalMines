@@ -1,13 +1,11 @@
 package xyz.oribuin.eternalmines.mine;
 
-import org.bukkit.Chunk;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -91,35 +89,28 @@ public class Region {
     }
 
     /**
-     * Get all the entities inside the region
+     * Get all the players inside a region
      *
-     * @return A list of all the entities inside the region
+     * @return A list of all the players inside the region
      */
-    public List<LivingEntity> getEntitiesInside() {
+    public List<Player> getPlayersInside() {
         if (pos1 == null || pos2 == null)
             return new ArrayList<>();
 
-        List<Chunk> chunks = new ArrayList<>(this.locations.stream().map(Location::getChunk).distinct().toList());
-        List<LivingEntity> entities = new ArrayList<>();
-        for (Chunk chunk : chunks) {
-            for (Entity entity : chunk.getEntities()) {
-                // Check if the entity is a player
-                if (!(entity instanceof LivingEntity livingEntity))
-                    continue;
+        List<Player> players = new ArrayList<>();
+        for (final Player player : Bukkit.getOnlinePlayers()) {
+            // Check if the player is inside the region
+            if (!this.isInside(player.getLocation()))
+                continue;
 
-                // Check if the player is inside the region
-                if (!this.isInside(livingEntity.getLocation()))
-                    continue;
-
-                entities.add(livingEntity);
-            }
+            players.add(player);
         }
 
-        return entities;
+        return players;
     }
 
     /**
-     * Check if location is in the region
+     * Check if the location is in the region
      *
      * @param location The location to check
      * @return Whether the location is in the region

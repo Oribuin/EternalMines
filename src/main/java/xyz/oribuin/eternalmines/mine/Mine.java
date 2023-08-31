@@ -6,11 +6,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.oribuin.eternalmines.EternalMines;
+import xyz.oribuin.eternalmines.manager.ConfigurationManager.Setting;
 import xyz.oribuin.eternalmines.manager.MineManager;
 import xyz.oribuin.eternalmines.util.MineUtils;
 
@@ -70,6 +69,19 @@ public class Mine {
         if (this.region.getPos1() == null || this.region.getPos2() == null)
             return false;
 
+        // Don't reset if the mine hasn't been hit the reset threshold
+        if (Setting.LAG_CHECKS_ONLY_THRESHOLD_RESET.getBoolean()) {
+            if (this.getPercentageLeft() > this.resetPercentage)
+                return false;
+        }
+
+        // Don't reset if the mine is empty
+        if (Setting.LAG_CHECKS_ONLY_IF_NOT_EMPTY.getBoolean()) {
+            if (this.getPercentageBroken() >= 100)
+                return false;
+        }
+
+
         Map<Material, Double> blocks = new HashMap<>(this.blocks);
         if (this.blocks.isEmpty() || this.blocks.keySet().stream().allMatch(material -> material == Material.AIR)) {
             this.lastReset = System.currentTimeMillis(); // Set the last reset to the current time
@@ -80,24 +92,32 @@ public class Mine {
         blocks.keySet().removeIf(material -> !material.isBlock());
 
         this.lastReset = System.currentTimeMillis(); // Set the last reset to the current time
-        this.region.getEntitiesInside().stream()
-                .filter(livingEntity -> livingEntity.getType() == EntityType.PLAYER)
-                .forEach(livingEntity -> {
-                    Player player = (Player) livingEntity;
 
-                    // Teleport the player to the spawn
-                    if (NMSUtil.isPaper())
-                        player.teleportAsync(this.spawn);
-                    else
-                        player.teleport(this.spawn);
-                });
+        // Teleport players into the spawn
+        if (Setting.LAG_CHECKS_PLAYER_CHECKS.getBoolean()) {
+            this.region.getPlayersInside()
+                    .forEach(player -> {
+                        // why would you not want to use paper?
+                        if (!NMSUtil.isPaper()) {
+                            player.teleport(this.spawn);
+                            return;
+                        }
+
+                        // Teleport the player async
+                        player.teleportAsync(this.spawn).thenAccept(result -> {
+
+                            // If the teleport failed, Teleport the player sync
+                            if (!result) {
+                                player.teleport(this.spawn);
+                            }
+                        });
+                    });
+        }
 
         // Fill the region with the blocks, cannot be run async due to Bukkit API
         Bukkit.getScheduler().runTask(EternalMines.getInstance(), () -> this.region.fill(blocks));
         EternalMines.getInstance().getManager(MineManager.class).saveMine(this, false); // Save the mine
-
         return true;
-
     }
 
     /**

@@ -25,6 +25,11 @@ public class ConfigurationManager extends AbstractConfigurationManager {
     }
 
     public enum Setting implements RoseSetting {
+        LAG_CHECKS("lag-checks", null, "Disable certain features of the plugin if they're causing slight amounts of lag."),
+        LAG_CHECKS_PLAYER_CHECKS("lag-checks.player-checks", true, "Whether the player checks are enabled or not.", "This is to prevent the plugin from checking for player inside the mine"),
+        LAG_CHECKS_ONLY_THRESHOLD_RESET("lag-checks.only-threshold-reset", false, "Whether the mine should only reset if the mine has been hit the reset threshold.", "This is to prevent the mine from resetting if no one is mining in it."),
+        LAG_CHECKS_ONLY_IF_NOT_EMPTY("lag-checks.only-if-not-empty", false, "Whether the mine should only reset if it is not empty.", "This is to prevent the mine from resetting if it is empty."),
+
         RESET_TIMER("reset-timer", null, "The task that checks for whether a mine should reset or not."),
         RESET_TIMER_ENABLED("reset-timer.enabled", true, "Whether the reset timer is enabled or not."),
         RESET_TIMER_INTERVAL("reset-timer.interval", 20, "The interval in seconds between each reset check.", "This is in ticks, [20 ticks = 1 second]"),
