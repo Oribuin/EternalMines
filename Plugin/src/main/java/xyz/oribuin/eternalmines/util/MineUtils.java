@@ -52,21 +52,22 @@ public final class MineUtils {
      * @return The chunk snapshot
      */
     public static Material getLazyMaterial(Location location) {
-        World world = location.getWorld();
-        if (world == null || location.getBlockY() < world.getMinHeight() || location.getBlockY() >= world.getMaxHeight())
-            return null;
-
-        try {
-            ChunkLocation pair = new ChunkLocation(location.getWorld().getName(), location.getBlockX() >> 4, location.getBlockZ() >> 4);
-            return chunkSnapshotCache.get(pair, () -> {
-                Chunk chunk = location.getWorld().getChunkAt(location.getBlockX() >> 4, location.getBlockZ() >> 4);
-                return chunk.getChunkSnapshot();
-            }).getBlockType(location.getBlockX() & 15, location.getBlockY(), location.getBlockZ() & 15);
-        } catch (ExecutionException e) {
-            EternalMines.getInstance().getLogger().warning("Failed to fetch block type at " + location);
-            e.printStackTrace();
-            return Material.AIR;
-        }
+        return location.getBlock().getType();
+//        World world = location.getWorld();
+//        if (world == null || location.getBlockY() < world.getMinHeight() || location.getBlockY() >= world.getMaxHeight())
+//            return null;
+//
+//        try {
+//            ChunkLocation pair = new ChunkLocation(location.getWorld().getName(), location.getBlockX() >> 4, location.getBlockZ() >> 4);
+//            return chunkSnapshotCache.get(pair, () -> {
+//                Chunk chunk = location.getWorld().getChunkAt(location.getBlockX() >> 4, location.getBlockZ() >> 4);
+//                return chunk.getChunkSnapshot();
+//            }).getBlockType(location.getBlockX() & 15, location.getBlockY(), location.getBlockZ() & 15);
+//        } catch (ExecutionException e) {
+//            EternalMines.getInstance().getLogger().warning("Failed to fetch block type at " + location);
+//            e.printStackTrace();
+//            return Material.AIR;
+//        }
     }
 
     /**

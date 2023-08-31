@@ -7,8 +7,11 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
+import xyz.oribuin.eternalmines.nms.NMSAdapter;
+import xyz.oribuin.eternalmines.nms.NMSHandler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -73,6 +76,7 @@ public class Region {
 
         final double totalWeight = blocks.values().stream().mapToDouble(Double::doubleValue).sum();
 
+        final Map<Location, Material> toChange = new HashMap<>();
         for (final Block block : this.locations.stream().map(Location::getBlock).toList()) {
             final double random = Math.random() * totalWeight;
             double weightSum = 0;
@@ -80,12 +84,14 @@ public class Region {
             for (final Map.Entry<Material, Double> entry : blocks.entrySet()) {
                 weightSum += entry.getValue();
                 if (random <= weightSum) {
-                    block.setBlockData(entry.getKey().createBlockData(), false);
+                    toChange.put(block.getLocation(), entry.getKey());
                     break;
                 }
             }
         }
 
+        // Update the blocks
+        NMSAdapter.getHandler().update(toChange);
     }
 
     /**
