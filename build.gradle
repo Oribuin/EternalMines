@@ -7,7 +7,7 @@ allprojects {
     apply plugin: 'java-library'
     apply plugin: 'com.github.johnrengelman.shadow'
     group = 'xyz.oribuin'
-    version = '1.0.0'
+    version = '1.0.1'
 
     java {
         toolchain.languageVersion.set(JavaLanguageVersion.of(17))
@@ -36,7 +36,6 @@ allprojects {
 dependencies {
     implementation project(':Plugin')
     implementation project(':NMS:Wrapper')
-//    implementation project(':NMS:v1_16_R3')
     implementation project(path: ':NMS:v1_17_R1', configuration: 'remapped')
     implementation project(path: ':NMS:v1_18_R2', configuration: 'remapped')
     implementation project(path: ':NMS:v1_19_R1', configuration: 'remapped')
