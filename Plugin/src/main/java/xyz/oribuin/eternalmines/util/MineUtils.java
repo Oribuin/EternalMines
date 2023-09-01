@@ -23,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.oribuin.eternalmines.EternalMines;
+import xyz.oribuin.eternalmines.nms.NMSAdapter;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,22 +53,7 @@ public final class MineUtils {
      * @return The chunk snapshot
      */
     public static Material getLazyMaterial(Location location) {
-        return location.getBlock().getType();
-//        World world = location.getWorld();
-//        if (world == null || location.getBlockY() < world.getMinHeight() || location.getBlockY() >= world.getMaxHeight())
-//            return null;
-//
-//        try {
-//            ChunkLocation pair = new ChunkLocation(location.getWorld().getName(), location.getBlockX() >> 4, location.getBlockZ() >> 4);
-//            return chunkSnapshotCache.get(pair, () -> {
-//                Chunk chunk = location.getWorld().getChunkAt(location.getBlockX() >> 4, location.getBlockZ() >> 4);
-//                return chunk.getChunkSnapshot();
-//            }).getBlockType(location.getBlockX() & 15, location.getBlockY(), location.getBlockZ() & 15);
-//        } catch (ExecutionException e) {
-//            EternalMines.getInstance().getLogger().warning("Failed to fetch block type at " + location);
-//            e.printStackTrace();
-//            return Material.AIR;
-//        }
+        return NMSAdapter.getHandler().getBlock(location);
     }
 
     /**

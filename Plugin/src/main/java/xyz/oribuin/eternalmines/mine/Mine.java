@@ -77,7 +77,7 @@ public class Mine {
 
         // Don't reset if the mine is empty
         if (Setting.LAG_CHECKS_ONLY_IF_NOT_EMPTY.getBoolean()) {
-            if (this.getPercentageBroken() >= 100)
+            if (this.getPercentageBroken() <= 0)
                 return false;
         }
 
@@ -115,7 +115,7 @@ public class Mine {
         }
 
         // Fill the region with the blocks, cannot be run async due to Bukkit API
-        Bukkit.getScheduler().runTaskAsynchronously(EternalMines.getInstance(), () -> this.region.fill(blocks));
+        Bukkit.getScheduler().runTask(EternalMines.getInstance(), () -> this.region.fill(blocks));
         EternalMines.getInstance().getManager(MineManager.class).saveMine(this, false); // Save the mine
         return true;
     }
@@ -126,6 +126,10 @@ public class Mine {
      * @return the time left in milliseconds
      */
     public long getResetTimeLeft() {
+        if (this.resetDelay <= 0 || !Setting.RESET_TIMER_ENABLED.getBoolean())
+            return this.resetDelay * 1000;
+
+
         return (this.lastReset + (this.resetDelay * 1000)) - System.currentTimeMillis();
     }
 
@@ -136,7 +140,7 @@ public class Mine {
      */
     public boolean shouldReset() {
         // If the reset time is -1, Then the mine should reset when the reset percentage is reached
-        if (this.resetDelay <= 0 && this.resetPercentage >= 0)
+        if (this.resetDelay <= 0 && this.resetPercentage >= 0 || !Setting.RESET_TIMER_ENABLED.getBoolean())
             return this.getPercentageLeft() <= this.resetPercentage;
 
         return (System.currentTimeMillis() - this.lastReset) >= (this.resetDelay * 1000) || (this.resetPercentage >= 0 && this.getPercentageLeft() <= this.resetPercentage);

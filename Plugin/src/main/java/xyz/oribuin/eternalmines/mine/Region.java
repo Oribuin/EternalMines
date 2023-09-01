@@ -76,7 +76,6 @@ public class Region {
 
         final double totalWeight = blocks.values().stream().mapToDouble(Double::doubleValue).sum();
 
-        final Map<Location, Material> toChange = new HashMap<>();
         for (final Block block : this.locations.stream().map(Location::getBlock).toList()) {
             final double random = Math.random() * totalWeight;
             double weightSum = 0;
@@ -84,14 +83,14 @@ public class Region {
             for (final Map.Entry<Material, Double> entry : blocks.entrySet()) {
                 weightSum += entry.getValue();
                 if (random <= weightSum) {
-                    toChange.put(block.getLocation(), entry.getKey());
+                    NMSAdapter.getHandler().setBlock(block.getLocation(), entry.getKey());
                     break;
                 }
             }
         }
 
         // Update the blocks
-        NMSAdapter.getHandler().update(toChange);
+        NMSAdapter.getHandler().update(this.world);
     }
 
     /**
