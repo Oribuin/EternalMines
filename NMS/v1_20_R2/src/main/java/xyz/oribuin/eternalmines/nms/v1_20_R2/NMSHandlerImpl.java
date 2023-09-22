@@ -5,6 +5,7 @@ import net.minecraft.network.protocol.game.ClientboundForgetLevelChunkPacket;
 import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ThreadedLevelLightEngine;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -82,7 +83,7 @@ public class NMSHandlerImpl implements NMSHandler {
         for (final ChunkAccess access : chunks) {
             final LevelChunk levelChunk = (LevelChunk) access;
 
-            final ClientboundForgetLevelChunkPacket unloadChunk = new ClientboundForgetLevelChunkPacket(access.getPos().x, access.getPos().z);
+            final ClientboundForgetLevelChunkPacket unloadChunk = new ClientboundForgetLevelChunkPacket(new ChunkPos(levelChunk.getPos().x, levelChunk.getPos().z));
             final ClientboundLevelChunkWithLightPacket chunkWithLight = new ClientboundLevelChunkWithLightPacket(
                     levelChunk,
                     lightEngine,
