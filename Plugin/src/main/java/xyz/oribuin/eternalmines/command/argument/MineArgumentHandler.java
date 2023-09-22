@@ -22,7 +22,7 @@ public class MineArgumentHandler extends RoseCommandArgumentHandler<Mine> {
         String input = argumentParser.next();
         Mine mine = this.rosePlugin.getManager(MineManager.class).getMine(input);
         if (mine == null) {
-            throw new HandledArgumentException("argument-handler-mine", StringPlaceholders.of("mine", input));
+            throw new HandledArgumentException("argument-handler-mine", StringPlaceholders.of("input", input));
         }
 
         return mine;
