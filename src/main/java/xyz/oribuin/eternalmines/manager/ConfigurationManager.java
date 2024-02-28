@@ -5,6 +5,7 @@ import dev.rosewood.rosegarden.config.CommentedFileConfiguration;
 import dev.rosewood.rosegarden.config.RoseSetting;
 import dev.rosewood.rosegarden.manager.AbstractConfigurationManager;
 import xyz.oribuin.eternalmines.EternalMines;
+import xyz.oribuin.eternalmines.mine.FillType;
 
 public class ConfigurationManager extends AbstractConfigurationManager {
 
@@ -38,6 +39,9 @@ public class ConfigurationManager extends AbstractConfigurationManager {
         LISTENERS_BREAK_BLOCK("listeners.break-block", true, "Whether the break block listener is enabled or not.", "This listener is used to check whether the mine should reset when a block is broken."),
         LISTENERS_LOGIN("listeners.login", true, "Whether the login listener is enabled or not.", "This listener is used to teleport the player to the mine spawn when they login inside a mine."),
 
+        FILL_TYPE("fill-type", FillType.LAYERED.name(), "The method that a mine would be reset with", "Options: [LAYERED, WHOLE, CHUNKED]", "Layered: Resets the mine layer by layer", "Whole: Resets the entire mine at once", "Chunked: Resets the mine in each individual chunk"),
+        LAYER_FILL_DELAY("layer-fill-delay", 20, "The delay in seconds between each layer fill.", "This is in ticks, [20 ticks = 1 second]"),
+        CHUNKED_FILL_DELAY("chunked-fill-delay", 100, "The delay in seconds between each chunk fill.", "This is in ticks, [20 ticks = 1 second]");
         ;
 
         private final String key;
