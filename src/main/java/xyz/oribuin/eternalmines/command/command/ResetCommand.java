@@ -19,7 +19,7 @@ public class ResetCommand extends RoseCommand {
 
     @RoseExecutable
     public void execute(CommandContext context, Mine mine) {
-        final LocaleManager locale = this.rosePlugin.getManager(LocaleManager.class);
+        LocaleManager locale = this.rosePlugin.getManager(LocaleManager.class);
 
         if (mine.reset()) {
             locale.sendMessage(context.getSender(), "command-reset-success", StringPlaceholders.of("mine", mine.getId()));

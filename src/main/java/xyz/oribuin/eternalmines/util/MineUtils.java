@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public final class MineUtils {
+public class MineUtils {
 
     private static final Cache<Material, BlockData> blockDataCache = CacheBuilder.newBuilder()
             .expireAfterWrite(3, TimeUnit.MINUTES)
@@ -93,7 +93,7 @@ public final class MineUtils {
         if (NMSUtil.isPaper())
             return loc.clone().toBlockLocation();
 
-        final Location location = loc.clone();
+        Location location = loc.clone();
         return new Location(location.getWorld(), location.getBlockX(), loc.getBlockY(), loc.getBlockZ());
     }
 
@@ -107,7 +107,7 @@ public final class MineUtils {
         if (NMSUtil.isPaper())
             return location.clone().toCenterLocation();
 
-        final Location loc = location.clone();
+        Location loc = location.clone();
         loc.add(0.5, 0.5, 0.5);
         loc.setYaw(180f);
         loc.setPitch(0f);
@@ -181,8 +181,7 @@ public final class MineUtils {
         if (text == null)
             return null;
 
-        // TODO: Add back in PlaceholderAPI support
-        return HexUtils.colorify(placeholders.apply(text));
+        return HexUtils.colorify(PlaceholderAPI.setPlaceholders(player, placeholders.apply(text)));
     }
 
     /**
@@ -246,7 +245,7 @@ public final class MineUtils {
             return List.of(start);
         }
 
-        final List<Integer> list = new ArrayList<>();
+        List<Integer> list = new ArrayList<>();
         for (int i = start; i <= end; i++) {
             list.add(i);
         }

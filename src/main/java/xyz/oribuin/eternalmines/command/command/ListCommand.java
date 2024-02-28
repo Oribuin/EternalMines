@@ -17,12 +17,12 @@ public class ListCommand extends RoseCommand {
 
     @RoseExecutable
     public void execute(CommandContext context) {
-        final LocaleManager locale = this.rosePlugin.getManager(LocaleManager.class);
-        final MineManager manager = this.rosePlugin.getManager(MineManager.class);
+        LocaleManager locale = this.rosePlugin.getManager(LocaleManager.class);
+        MineManager manager = this.rosePlugin.getManager(MineManager.class);
 
         locale.sendSimpleMessage(context.getSender(), "command-list-header");
         manager.getMines().values().forEach(mine -> {
-            final StringPlaceholders placeholders = StringPlaceholders.builder("mine", mine.getId())
+            StringPlaceholders placeholders = StringPlaceholders.builder("mine", mine.getId())
                     .add("world", mine.getWorld().getName())
                     .add("spawn", String.format("%.2f, %.2f, %.2f", mine.getSpawn().getX(), mine.getSpawn().getY(), mine.getSpawn().getZ()))
                     .add("reset-percent", mine.getResetPercentage())

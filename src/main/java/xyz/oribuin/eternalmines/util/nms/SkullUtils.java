@@ -11,7 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
-public final class SkullUtils {
+public class SkullUtils {
 
     private static Method method_SkullMeta_setProfile;
     private static Field field_SkullMeta_profile;

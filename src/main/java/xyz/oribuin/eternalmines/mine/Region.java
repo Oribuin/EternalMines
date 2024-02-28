@@ -72,10 +72,10 @@ public class Region {
         if (blocks.isEmpty() || blocks.keySet().stream().allMatch(Material::isAir))
             return;
 
-        final double totalWeight = blocks.values().stream().mapToDouble(Double::doubleValue).sum();
+        double totalWeight = blocks.values().stream().mapToDouble(Double::doubleValue).sum();
 
         for (final Block block : this.locations.stream().map(Location::getBlock).toList()) {
-            final double random = Math.random() * totalWeight;
+            double random = Math.random() * totalWeight;
             double weightSum = 0;
 
             for (final Map.Entry<Material, Double> entry : blocks.entrySet()) {

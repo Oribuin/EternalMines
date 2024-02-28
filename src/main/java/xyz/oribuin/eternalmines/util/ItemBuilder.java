@@ -46,7 +46,7 @@ public class ItemBuilder {
      */
     @SuppressWarnings("deprecation")
     public ItemBuilder setName(@Nullable String text) {
-        final ItemMeta meta = this.item.getItemMeta();
+        ItemMeta meta = this.item.getItemMeta();
         if (meta == null || text == null)
             return this;
 
@@ -64,7 +64,7 @@ public class ItemBuilder {
      */
     @SuppressWarnings("deprecation")
     public ItemBuilder setLore(@Nullable List<String> lore) {
-        final ItemMeta meta = this.item.getItemMeta();
+        ItemMeta meta = this.item.getItemMeta();
         if (meta == null || lore == null)
             return this;
 
@@ -82,7 +82,7 @@ public class ItemBuilder {
      */
     @SuppressWarnings("deprecation")
     public ItemBuilder setLore(@Nullable String... lore) {
-        final ItemMeta meta = this.item.getItemMeta();
+        ItemMeta meta = this.item.getItemMeta();
         if (meta == null || lore == null)
             return this;
 
@@ -111,7 +111,7 @@ public class ItemBuilder {
      * @return Item.Builder
      */
     public ItemBuilder addEnchant(Enchantment ench, int level) {
-        final ItemMeta meta = this.item.getItemMeta();
+        ItemMeta meta = this.item.getItemMeta();
         if (meta == null)
             return this;
 
@@ -139,7 +139,7 @@ public class ItemBuilder {
      * @return Item.Builder
      */
     public ItemBuilder setFlags(ItemFlag[] flags) {
-        final ItemMeta meta = this.item.getItemMeta();
+        ItemMeta meta = this.item.getItemMeta();
         if (meta == null)
             return this;
 
@@ -158,7 +158,7 @@ public class ItemBuilder {
      * @return Item.Builder
      */
     public ItemBuilder setUnbreakable(boolean unbreakable) {
-        final ItemMeta meta = this.item.getItemMeta();
+        ItemMeta meta = this.item.getItemMeta();
         if (meta == null)
             return this;
 
@@ -175,7 +175,7 @@ public class ItemBuilder {
         if (!b)
             return this;
 
-        final ItemMeta meta = this.item.getItemMeta();
+        ItemMeta meta = this.item.getItemMeta();
         if (meta == null)
             return this;
 
@@ -194,11 +194,11 @@ public class ItemBuilder {
      * @return Item.Builder
      */
     public ItemBuilder setNBT(Plugin plugin, String key, String value) {
-        final ItemMeta meta = item.getItemMeta();
+        ItemMeta meta = item.getItemMeta();
         if (meta == null)
             return this;
 
-        final PersistentDataContainer container = meta.getPersistentDataContainer();
+        PersistentDataContainer container = meta.getPersistentDataContainer();
         container.set(new NamespacedKey(plugin, key), PersistentDataType.STRING, value);
         item.setItemMeta(meta);
         return this;
@@ -212,11 +212,11 @@ public class ItemBuilder {
      * @return Item.Builder
      */
     public ItemBuilder setNBT(Plugin plugin, String key, int value) {
-        final ItemMeta meta = item.getItemMeta();
+        ItemMeta meta = item.getItemMeta();
         if (meta == null)
             return this;
 
-        final PersistentDataContainer container = meta.getPersistentDataContainer();
+        PersistentDataContainer container = meta.getPersistentDataContainer();
         container.set(new NamespacedKey(plugin, key), PersistentDataType.INTEGER, value);
         item.setItemMeta(meta);
         return this;
@@ -230,11 +230,11 @@ public class ItemBuilder {
      * @return Item.Builder
      */
     public ItemBuilder setNBT(Plugin plugin, String key, double value) {
-        final ItemMeta meta = item.getItemMeta();
+        ItemMeta meta = item.getItemMeta();
         if (meta == null)
             return this;
 
-        final PersistentDataContainer container = meta.getPersistentDataContainer();
+        PersistentDataContainer container = meta.getPersistentDataContainer();
         container.set(new NamespacedKey(plugin, key), PersistentDataType.DOUBLE, value);
         item.setItemMeta(meta);
         return this;
@@ -244,7 +244,7 @@ public class ItemBuilder {
         if (item.getType() != Material.PLAYER_HEAD || texture == null)
             return this;
 
-        final SkullMeta skullMeta = (SkullMeta) item.getItemMeta();
+        SkullMeta skullMeta = (SkullMeta) item.getItemMeta();
         if (skullMeta == null)
             return this;
 
@@ -258,7 +258,7 @@ public class ItemBuilder {
         if (item.getType() != Material.PLAYER_HEAD || owner == null)
             return this;
 
-        final SkullMeta skullMeta = (SkullMeta) item.getItemMeta();
+        SkullMeta skullMeta = (SkullMeta) item.getItemMeta();
         if (skullMeta == null)
             return this;
 

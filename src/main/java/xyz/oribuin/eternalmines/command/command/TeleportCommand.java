@@ -21,8 +21,8 @@ public class TeleportCommand extends RoseCommand {
 
     @RoseExecutable
     public void execute(CommandContext context, Mine mine) {
-        final LocaleManager locale = this.rosePlugin.getManager(LocaleManager.class);
-        final Player player = (Player) context.getSender();
+        LocaleManager locale = this.rosePlugin.getManager(LocaleManager.class);
+        Player player = (Player) context.getSender();
 
         // Teleport the player to the mine's spawn, using spigot's teleportation method if the server is not running paper.
         if (NMSUtil.isPaper() ? player.teleportAsync(mine.getSpawn()).isDone() : player.teleport(mine.getSpawn())) {

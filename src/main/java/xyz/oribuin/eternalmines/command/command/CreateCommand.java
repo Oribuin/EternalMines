@@ -20,9 +20,8 @@ public class CreateCommand extends RoseCommand {
 
     @RoseExecutable
     public void execute(CommandContext context, String name, World world, Location spawn) {
-
-        final LocaleManager locale = this.rosePlugin.getManager(LocaleManager.class);
-        final MineManager manager = this.rosePlugin.getManager(MineManager.class);
+        LocaleManager locale = this.rosePlugin.getManager(LocaleManager.class);
+        MineManager manager = this.rosePlugin.getManager(MineManager.class);
 
         if (manager.getMine(name) != null) {
             locale.sendMessage(context.getSender(), "command-create-already-exists");

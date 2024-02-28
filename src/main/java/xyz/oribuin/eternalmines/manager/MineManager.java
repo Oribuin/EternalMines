@@ -29,7 +29,7 @@ public class MineManager extends Manager {
 
     @Override
     public void reload() {
-        final File minesFolder = new File(this.rosePlugin.getDataFolder(), "mines");
+        File minesFolder = new File(this.rosePlugin.getDataFolder(), "mines");
         if (!minesFolder.exists()) {
             minesFolder.mkdirs();
         }
@@ -49,7 +49,7 @@ public class MineManager extends Manager {
         }
 
         Arrays.stream(files).filter(file -> file.getName().endsWith(".yml")).forEach(file -> {
-            final Mine mine = this.createMine(file, CommentedFileConfiguration.loadConfiguration(file));
+            Mine mine = this.createMine(file, CommentedFileConfiguration.loadConfiguration(file));
             if (mine != null) {
                 this.cachedMines.put(mine.getId(), mine);
             }
@@ -62,14 +62,14 @@ public class MineManager extends Manager {
      * @param config The config to load the mine from
      * @return The loaded mine
      */
-    public @Nullable Mine createMine(@NotNull final File file, @NotNull final CommentedFileConfiguration config) {
+    public @Nullable Mine createMine(@NotNull File file, @NotNull CommentedFileConfiguration config) {
         CommentedConfigurationSection settings = config.getConfigurationSection("mine-settings");
         if (settings == null) {
             this.rosePlugin.getLogger().severe("Unable to load mine settings from " + config.getName());
             return null;
         }
 
-        final String id = settings.getString("id"); // Id of the mine
+        String id = settings.getString("id"); // Id of the mine
         if (id == null) {
             this.rosePlugin.getLogger().severe("Unable to load mine id from " + file.getName());
             return null;
@@ -84,7 +84,7 @@ public class MineManager extends Manager {
         }
 
         // Load spawn location of the mine
-        final CommentedConfigurationSection spawnSection = settings.getConfigurationSection("spawn");
+        CommentedConfigurationSection spawnSection = settings.getConfigurationSection("spawn");
         if (spawnSection != null) {
             spawnLocation = new Location(world, spawnSection.getDouble("x"), spawnSection.getDouble("y"), spawnSection.getDouble("z"), (float) spawnSection.getDouble("yaw"), (float) spawnSection.getDouble("pitch"));
         }
@@ -95,11 +95,11 @@ public class MineManager extends Manager {
         }
 
         // Load region of the mine
-        final Region region = new Region();
-        final CommentedConfigurationSection regions = settings.getConfigurationSection("region");
+        Region region = new Region();
+        CommentedConfigurationSection regions = settings.getConfigurationSection("region");
         if (regions != null) {
-            final Location pos1 = new Location(world, regions.getDouble("pos1.x"), regions.getDouble("pos1.y"), regions.getDouble("pos1.z"));
-            final Location pos2 = new Location(world, regions.getDouble("pos2.x"), regions.getDouble("pos2.y"), regions.getDouble("pos2.z"));
+            Location pos1 = new Location(world, regions.getDouble("pos1.x"), regions.getDouble("pos1.y"), regions.getDouble("pos1.z"));
+            Location pos2 = new Location(world, regions.getDouble("pos2.x"), regions.getDouble("pos2.y"), regions.getDouble("pos2.z"));
 
             region.setPos1(pos1);
             region.setPos2(pos2);
@@ -107,8 +107,8 @@ public class MineManager extends Manager {
         }
 
         // Load blocks of the mine
-        final Map<Material, Double> blocks = new HashMap<>();
-        final CommentedConfigurationSection blockSection = settings.getConfigurationSection("blocks");
+        Map<Material, Double> blocks = new HashMap<>();
+        CommentedConfigurationSection blockSection = settings.getConfigurationSection("blocks");
         if (blockSection != null && !blockSection.getKeys(false).isEmpty()) {
             blockSection.getKeys(false).forEach(s -> {
                 try {
@@ -208,7 +208,7 @@ public class MineManager extends Manager {
      * @param name The name of the mine
      * @return The mine
      */
-    public @Nullable Mine getMine(@NotNull final String name) {
+    public @Nullable Mine getMine(@NotNull String name) {
         return this.cachedMines.get(name);
     }
 
@@ -228,7 +228,7 @@ public class MineManager extends Manager {
 //        return null;
     }
 
-    public boolean deleteMine(@NotNull final String name) {
+    public boolean deleteMine(@NotNull String name) {
         Mine mine = this.cachedMines.get(name);
         if (mine == null) return false;
 
