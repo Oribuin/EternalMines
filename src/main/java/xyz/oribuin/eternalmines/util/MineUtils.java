@@ -292,31 +292,23 @@ public class MineUtils {
     }
 
     /**
-     * Create a file from the plugin's resources
+     * Get an enum from a string value
      *
-     * @param rosePlugin The plugin
-     * @param fileName   The file name
-     * @return The file
+     * @param enumClass The enum class
+     * @param name      The name of the enum
+     * @param <T>       The enum type
+     * @return The enum
      */
-    @NotNull
-    public static File createFile(@NotNull RosePlugin rosePlugin, @NotNull String fileName) {
-        File file = new File(rosePlugin.getDataFolder(), fileName); // Create the file
+    public static <T extends Enum<T>> T getEnum(Class<T> enumClass, String name, T def) {
+        if (name == null)
+            return def;
 
-        if (file.exists())
-            return file;
-
-        try (InputStream inStream = rosePlugin.getResource(fileName)) {
-            if (inStream == null) {
-                file.createNewFile();
-                return file;
-            }
-
-            Files.copy(inStream, Paths.get(file.getAbsolutePath()));
-        } catch (IOException e) {
-            e.printStackTrace();
+        try {
+            return Enum.valueOf(enumClass, name.toUpperCase());
+        } catch (IllegalArgumentException ignored) {
         }
 
-        return file;
+        return def;
     }
 
     /**
@@ -349,82 +341,6 @@ public class MineUtils {
         }
 
         return file;
-    }
-
-    @Nullable
-    public static ItemStack getItemStack(@NotNull CommentedConfigurationSection config, @NotNull String path, @Nullable Player player, @Nullable StringPlaceholders placeholders) {
-        Material material = Material.getMaterial(PlaceholderAPI.setPlaceholders(player, config.getString(path + ".material", "")));
-        if (material == null)
-            return null;
-
-        if (placeholders == null)
-            placeholders = StringPlaceholders.empty();
-
-        // Format the item lore
-        StringPlaceholders finalPlaceholders = placeholders;
-        List<String> lore = new ArrayList<>(config.getStringList(path + ".lore"))
-                .stream()
-                .map(s -> format(player, s, finalPlaceholders))
-                .toList();
-
-        // Get item flags
-        ItemFlag[] flags = config.getStringList(path + ".flags")
-                .stream()
-                .map(String::toUpperCase)
-                .map(ItemFlag::valueOf)
-                .toArray(ItemFlag[]::new);
-
-        // Build the item stack
-        ItemBuilder builder = new ItemBuilder(material)
-                .setName(format(player, config.getString(path + ".name"), placeholders))
-                .setLore(lore)
-                .setAmount(config.getInt(path + ".amount", 1))
-                .setFlags(flags)
-                .setTexture(config.getString(path + ".texture"))
-                .glow(Boolean.parseBoolean(format(player, config.getString(path + ".glow", "false"), placeholders)))
-                .setPotionColor(fromHex(config.getString(path + ".potion-color", null)))
-                .setModel(parseInteger(format(player, config.getString(path + ".model-data", "-1"), placeholders)));
-
-        // Get item owner
-        String owner = config.getString(path + ".owner", null);
-        if (owner != null) {
-            if (owner.equalsIgnoreCase("self")) {
-                builder.setOwner(player);
-            } else {
-                if (NMSUtil.isPaper() && Bukkit.getOfflinePlayerIfCached(owner) != null)
-                    builder.setOwner(Bukkit.getOfflinePlayerIfCached(owner));
-                else
-                    builder.setOwner(Bukkit.getOfflinePlayer(owner));
-            }
-        }
-
-        CommentedConfigurationSection enchants = config.getConfigurationSection(path + ".enchants");
-        if (enchants != null) {
-            enchants.getKeys(false).forEach(key -> {
-                Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(key.toLowerCase()));
-                if (enchantment == null)
-                    return;
-
-                builder.addEnchant(enchantment, enchants.getInt(key));
-            });
-        }
-
-        return builder.create();
-    }
-
-    /**
-     * Get ItemStack from CommentedFileSection path
-     *
-     * @param config The CommentedFileSection
-     * @param path   The path to the item
-     * @return The itemstack
-     */
-    public static ItemStack getItemStack(CommentedConfigurationSection config, String path) {
-        return getItemStack(config, path, null, StringPlaceholders.empty());
-    }
-
-    public static ItemStack getItemStack(CommentedConfigurationSection config, String path, Player player) {
-        return getItemStack(config, path, player, StringPlaceholders.empty());
     }
 
     /**

@@ -46,6 +46,7 @@ public class EternalMines extends RosePlugin {
 
         PluginManager pluginManager = this.getServer().getPluginManager();
         HandlerList.unregisterAll(this); // Unregister all listeners.
+        Bukkit.getScheduler().cancelTasks(this); // Cancel all tasks.
 
         if (Setting.LISTENERS_BREAK_BLOCK.getBoolean())
             pluginManager.registerEvents(new MineListener(this), this);
@@ -61,7 +62,7 @@ public class EternalMines extends RosePlugin {
     @Override
     public void disable() {
         HandlerList.unregisterAll(this); // Unregister all listeners.
-        Bukkit.getScheduler().cancelTasks(this);
+        Bukkit.getScheduler().cancelTasks(this); // Cancel all tasks.
     }
 
     @Override
