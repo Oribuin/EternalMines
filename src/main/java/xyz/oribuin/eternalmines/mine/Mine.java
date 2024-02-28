@@ -14,12 +14,9 @@ import xyz.oribuin.eternalmines.manager.MineManager;
 import xyz.oribuin.eternalmines.util.MineUtils;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class Mine {
 
@@ -81,7 +78,6 @@ public class Mine {
                 return false;
         }
 
-
         Map<Material, Double> blocks = new HashMap<>(this.blocks);
         if (this.blocks.isEmpty() || this.blocks.keySet().stream().allMatch(material -> material == Material.AIR)) {
             this.lastReset = System.currentTimeMillis(); // Set the last reset to the current time
@@ -115,7 +111,7 @@ public class Mine {
         }
 
         // Fill the region with the blocks, cannot be run async due to Bukkit API
-        Bukkit.getScheduler().runTask(EternalMines.getInstance(), () -> this.region.fill(blocks));
+        Bukkit.getScheduler().runTask(EternalMines.getInstance(), () -> this.region.fill(blocks, Setting.LAG_CHECKS_RESET_ALL.getBoolean()));
         EternalMines.getInstance().getManager(MineManager.class).saveMine(this, false); // Save the mine
         return true;
     }

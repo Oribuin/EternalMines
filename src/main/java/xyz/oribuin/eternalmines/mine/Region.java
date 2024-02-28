@@ -70,7 +70,7 @@ public class Region {
      *
      * @param blocks The blocks to fill the region with
      */
-    public void fill(Map<Material, Double> blocks) {
+    public void fill(Map<Material, Double> blocks, boolean resetAll) {
         if (this.world == null || this.pos1 == null || this.pos2 == null)
             return;
 
@@ -80,9 +80,9 @@ public class Region {
 
         FillType fillType = MineUtils.getEnum(FillType.class, Setting.FILL_TYPE.getString(), FillType.LAYERED);
         switch (fillType) {
-            case LAYERED -> this.fillLayered(blocks);
-            case WHOLE -> this.fillEntire(blocks);
-            case CHUNKED -> this.fillChunked(blocks);
+            case LAYERED -> this.fillLayered(blocks, resetAll);
+            case WHOLE -> this.fillEntire(blocks, resetAll);
+            case CHUNKED -> this.fillChunked(blocks, resetAll);
         }
     }
 
@@ -91,12 +91,15 @@ public class Region {
      *
      * @param blocks The blocks to fill the region with
      */
-    public void fillEntire(Map<Material, Double> blocks) {
+    public void fillEntire(Map<Material, Double> blocks, boolean resetAll) {
         double totalWeight = blocks.values().stream().mapToDouble(Double::doubleValue).sum();
 
         for (Block block : this.locations.stream().map(Location::getBlock).toList()) {
             double random = Math.random() * totalWeight;
             double weightSum = 0;
+
+            // If we're only resetting blocks that are air, skip the block if it's not air
+            if (!resetAll && !block.getType().isAir()) continue;
 
             for (Map.Entry<Material, Double> entry : blocks.entrySet()) {
                 weightSum += entry.getValue();
@@ -113,7 +116,7 @@ public class Region {
      *
      * @param blocks The blocks to fill the region with
      */
-    public void fillLayered(Map<Material, Double> blocks) {
+    public void fillLayered(Map<Material, Double> blocks, boolean resetAll) {
         AtomicInteger layer = new AtomicInteger(0);
 
         if (this.pos1 == null || this.pos2 == null)
@@ -148,6 +151,9 @@ public class Region {
                 double random = Math.random() * blocks.values().stream().mapToDouble(Double::doubleValue).sum();
                 double weightSum = 0;
 
+                // If we're only resetting blocks that are air, skip the block if it's not air
+                if (!resetAll && !block.getType().isAir()) continue;
+
                 for (Map.Entry<Material, Double> entry : blocks.entrySet()) {
                     weightSum += entry.getValue();
                     if (random <= weightSum) {
@@ -164,7 +170,7 @@ public class Region {
      *
      * @param blocks The blocks to fill the region with
      */
-    public void fillChunked(Map<Material, Double> blocks) {
+    public void fillChunked(Map<Material, Double> blocks, boolean resetAll) {
         if (this.pos1 == null || this.pos2 == null)
             return;
 
@@ -192,6 +198,9 @@ public class Region {
             for (Block block : locations) {
                 double random = Math.random() * blocks.values().stream().mapToDouble(Double::doubleValue).sum();
                 double weightSum = 0;
+
+                // If we're only resetting blocks that are air, skip the block if it's not air
+                if (!resetAll && !block.getType().isAir()) continue;
 
                 for (Map.Entry<Material, Double> entry : blocks.entrySet()) {
                     weightSum += entry.getValue();

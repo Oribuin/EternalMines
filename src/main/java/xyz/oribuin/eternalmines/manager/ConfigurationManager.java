@@ -30,6 +30,7 @@ public class ConfigurationManager extends AbstractConfigurationManager {
         LAG_CHECKS_PLAYER_CHECKS("lag-checks.player-checks", true, "Whether the player checks are enabled or not.", "This is to prevent the plugin from checking for player inside the mine"),
         LAG_CHECKS_ONLY_THRESHOLD_RESET("lag-checks.only-threshold-reset", false, "Whether the mine should only reset if the mine has been hit the reset threshold.", "This is to prevent the mine from resetting if no one is mining in it."),
         LAG_CHECKS_ONLY_IF_NOT_EMPTY("lag-checks.only-if-not-empty", false, "Whether the mine should only reset if it is not empty.", "This is to prevent the mine from resetting if it is empty."),
+        LAG_CHECKS_RESET_ALL("lag-checks.reset-all", false, "Whether the mine should change all blocks or only the blocks that have been broken.", "This is to prevent the mine from resetting all blocks if it is not needed."),
 
         RESET_TIMER("reset-timer", null, "The task that checks for whether a mine should reset or not."),
         RESET_TIMER_ENABLED("reset-timer.enabled", true, "Whether the reset timer is enabled or not."),
@@ -41,8 +42,7 @@ public class ConfigurationManager extends AbstractConfigurationManager {
 
         FILL_TYPE("fill-type", FillType.LAYERED.name(), "The method that a mine would be reset with", "Options: [LAYERED, WHOLE, CHUNKED]", "Layered: Resets the mine layer by layer", "Whole: Resets the entire mine at once", "Chunked: Resets the mine in each individual chunk"),
         LAYER_FILL_DELAY("layer-fill-delay", 20, "The delay in seconds between each layer fill.", "This is in ticks, [20 ticks = 1 second]"),
-        CHUNKED_FILL_DELAY("chunked-fill-delay", 100, "The delay in seconds between each chunk fill.", "This is in ticks, [20 ticks = 1 second]");
-        ;
+        CHUNKED_FILL_DELAY("chunked-fill-delay", 100, "The delay in seconds between each chunk fill.", "This is in ticks, [20 ticks = 1 second]");;
 
         private final String key;
         private final Object defaultValue;
