@@ -74,11 +74,11 @@ public class Region {
 
         double totalWeight = blocks.values().stream().mapToDouble(Double::doubleValue).sum();
 
-        for (final Block block : this.locations.stream().map(Location::getBlock).toList()) {
+        for (Block block : this.locations.stream().map(Location::getBlock).toList()) {
             double random = Math.random() * totalWeight;
             double weightSum = 0;
 
-            for (final Map.Entry<Material, Double> entry : blocks.entrySet()) {
+            for (Map.Entry<Material, Double> entry : blocks.entrySet()) {
                 weightSum += entry.getValue();
                 if (random <= weightSum) {
                     MineUtils.setLazyBlock(block, entry.getKey());
@@ -100,7 +100,7 @@ public class Region {
             return new ArrayList<>();
 
         List<Player> players = new ArrayList<>();
-        for (final Player player : Bukkit.getOnlinePlayers()) {
+        for  (Player player : Bukkit.getOnlinePlayers()) {
             // Check if the player is inside the region
             if (!this.isInside(player.getLocation()))
                 continue;

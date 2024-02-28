@@ -15,7 +15,7 @@ public class PlayerListeners implements Listener {
 
     private final MineManager manager;
 
-    public PlayerListeners(final EternalMines manager) {
+    public PlayerListeners(EternalMines manager) {
         this.manager = manager.getManager(MineManager.class);
     }
 

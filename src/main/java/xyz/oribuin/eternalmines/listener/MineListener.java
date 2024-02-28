@@ -12,7 +12,7 @@ public class MineListener implements Listener {
 
     private final MineManager manager;
 
-    public MineListener(final EternalMines plugin) {
+    public MineListener(EternalMines plugin) {
         this.manager = plugin.getManager(MineManager.class);
     }
 

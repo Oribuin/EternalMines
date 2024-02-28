@@ -9,7 +9,7 @@ public class ResetTask extends BukkitRunnable {
 
     private final MineManager manager;
 
-    public ResetTask(final EternalMines plugin) {
+    public ResetTask(EternalMines plugin) {
         this.manager = plugin.getManager(MineManager.class);
     }
 
