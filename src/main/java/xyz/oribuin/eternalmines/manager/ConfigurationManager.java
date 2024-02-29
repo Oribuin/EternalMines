@@ -28,9 +28,9 @@ public class ConfigurationManager extends AbstractConfigurationManager {
     public enum Setting implements RoseSetting {
         LAG_CHECKS("lag-checks", null, "Disable certain features of the plugin if they're causing slight amounts of lag."),
         LAG_CHECKS_PLAYER_CHECKS("lag-checks.player-checks", true, "Whether the player checks are enabled or not.", "This is to prevent the plugin from checking for player inside the mine"),
-        LAG_CHECKS_ONLY_THRESHOLD_RESET("lag-checks.only-threshold-reset", false, "Whether the mine should only reset if the mine has been hit the reset threshold.", "This is to prevent the mine from resetting if no one is mining in it."),
-        LAG_CHECKS_ONLY_IF_NOT_EMPTY("lag-checks.only-if-not-empty", false, "Whether the mine should only reset if it is not empty.", "This is to prevent the mine from resetting if it is empty."),
-        LAG_CHECKS_RESET_ALL("lag-checks.reset-all", false, "Whether the mine should change all blocks or only the blocks that have been broken.", "This is to prevent the mine from resetting all blocks if it is not needed."),
+        LAG_CHECKS_ONLY_THRESHOLD_RESET("lag-checks.only-threshold-reset", false, "Enabling this option will only reset a mine if the threshold has been reached."),
+        LAG_CHECKS_ONLY_IF_NOT_EMPTY("lag-checks.only-if-not-empty", false, "Enabling this open will only reset a mine if all the blocks have been broken"),
+        LAG_CHECKS_RESET_ALL("lag-checks.reset-all", true, "Disabling this option will make mines only fill in the blank spaces, This is recommended for performance.", "This is to prevent the mine from resetting all blocks if it is not needed."),
 
         RESET_TIMER("reset-timer", null, "The task that checks for whether a mine should reset or not."),
         RESET_TIMER_ENABLED("reset-timer.enabled", true, "Whether the reset timer is enabled or not."),
