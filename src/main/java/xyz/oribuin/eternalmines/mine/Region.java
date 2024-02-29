@@ -74,6 +74,10 @@ public class Region {
         if (this.world == null || this.pos1 == null || this.pos2 == null)
             return;
 
+        // Cache the locations if they're empty
+        if (this.locations.isEmpty()) this.cacheLocations();
+        if (this.locations.isEmpty()) return;
+
         // Don't bother if the blocks are empty or all air
         if (blocks.isEmpty() || blocks.keySet().stream().allMatch(Material::isAir))
             return;
