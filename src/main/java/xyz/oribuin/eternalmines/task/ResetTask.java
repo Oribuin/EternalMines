@@ -16,6 +16,10 @@ public class ResetTask extends BukkitRunnable {
     @Override
     public void run() {
         for (Mine mine : this.manager.getMines().values()) {
+            // Don't reset if the world is not loaded.
+            if (!mine.getSpawn().getChunk().isLoaded()) return;
+
+            // Reset if they should be reset.
             if (mine.shouldReset())
                 mine.reset();
         }

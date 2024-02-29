@@ -66,6 +66,10 @@ public class Mine {
         if (this.region.getPos1() == null || this.region.getPos2() == null)
             return false;
 
+        // Make sure the chunks are loaded
+        if (!this.region.getPos1().getChunk().isLoaded() || !this.region.getPos2().getChunk().isLoaded())
+            return false;
+
         // Don't reset if the mine hasn't been hit the reset threshold
         if (Setting.LAG_CHECKS_ONLY_THRESHOLD_RESET.getBoolean()) {
             if (this.getPercentageLeft() > this.resetPercentage)
