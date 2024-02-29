@@ -5,6 +5,8 @@ import xyz.oribuin.eternalmines.EternalMines;
 import xyz.oribuin.eternalmines.manager.MineManager;
 import xyz.oribuin.eternalmines.mine.Mine;
 
+import java.util.ArrayList;
+
 public class ResetTask extends BukkitRunnable {
 
     private final MineManager manager;
@@ -15,14 +17,11 @@ public class ResetTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        for (Mine mine : this.manager.getMines().values()) {
-            // Don't reset if the world is not loaded.
-            if (!mine.getSpawn().getChunk().isLoaded()) return;
-
-            // Reset if they should be reset.
-            if (mine.shouldReset())
+        new ArrayList<>(this.manager.getMines().values()).forEach(mine -> {
+            if (mine.shouldReset()) {
                 mine.reset();
-        }
+            }
+        });
     }
 
 }

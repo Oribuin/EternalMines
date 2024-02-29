@@ -56,13 +56,12 @@ public class EternalMines extends RosePlugin {
 
         // Register Plugin Tasks.
         if (Setting.RESET_TIMER_ENABLED.getBoolean())
-            new ResetTask(this).runTaskTimerAsynchronously(this, 60 * 20L, Setting.RESET_TIMER_INTERVAL.getLong());
+            new ResetTask(this).runTaskTimer(this, 60 * 20L, Setting.RESET_TIMER_INTERVAL.getLong());
     }
 
     @Override
     public void disable() {
         HandlerList.unregisterAll(this); // Unregister all listeners.
-        Bukkit.getScheduler().cancelTasks(this); // Cancel all tasks.
     }
 
     @Override

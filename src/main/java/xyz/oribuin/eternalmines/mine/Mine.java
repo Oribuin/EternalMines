@@ -66,9 +66,8 @@ public class Mine {
         if (this.region.getPos1() == null || this.region.getPos2() == null)
             return false;
 
-        // Make sure the chunks are loaded
-        if (!this.region.getPos1().getChunk().isLoaded() || !this.region.getPos2().getChunk().isLoaded())
-            return false;
+        this.lastReset = System.currentTimeMillis(); // Set the last reset to the current time
+        EternalMines.getInstance().getManager(MineManager.class).saveMine(this, false); // Save the mine
 
         // Don't reset if the mine hasn't been hit the reset threshold
         if (Setting.LAG_CHECKS_ONLY_THRESHOLD_RESET.getBoolean()) {
@@ -90,8 +89,6 @@ public class Mine {
 
         // Remove all non-block materials
         blocks.keySet().removeIf(material -> !material.isBlock());
-
-        this.lastReset = System.currentTimeMillis(); // Set the last reset to the current time
 
         // Teleport players into the spawn
         if (Setting.LAG_CHECKS_PLAYER_CHECKS.getBoolean()) {

@@ -13,7 +13,6 @@ import xyz.oribuin.eternalmines.util.ChunkPosition;
 import xyz.oribuin.eternalmines.util.MineUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -129,29 +128,22 @@ public class Region {
         int minimumY = Math.min(this.pos1.getBlockY(), this.pos2.getBlockY());
         int maximumY = Math.max(this.pos1.getBlockY(), this.pos2.getBlockY());
 
-        Map<Integer, List<Block>> blocksByLayer = new HashMap<>();
-        for (int i = minimumY - 1; i <= maximumY; i++) {
-            int finalI = i;
-            blocksByLayer.put(i, this.locations.stream()
-                    .filter(loc -> loc.getBlockY() == finalI)
-                    .map(Location::getBlock)
-                    .collect(Collectors.toList())
-            );
-        }
-
+        List<Block> newLocations = this.locations.stream().map(Location::getBlock).toList();
         Bukkit.getScheduler().runTaskTimer(EternalMines.getInstance(), bukkitTask -> {
             if (blocks.isEmpty()) {
                 bukkitTask.cancel();
                 return;
             }
 
-            if (layer.get() > maximumY) {
+            if (layer.get() > maximumY - minimumY) {
                 bukkitTask.cancel();
                 return;
             }
 
-            List<Block> locations = blocksByLayer.get(layer.getAndIncrement());
-            for (Block block : locations) {
+            int newLayer = layer.getAndIncrement();
+            for (Block block : newLocations) {
+                if (block.getY() != minimumY + newLayer) continue;
+
                 double random = Math.random() * blocks.values().stream().mapToDouble(Double::doubleValue).sum();
                 double weightSum = 0;
 

@@ -1,7 +1,5 @@
 package xyz.oribuin.eternalmines.util;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import dev.rosewood.rosegarden.RosePlugin;
 import dev.rosewood.rosegarden.utils.HexUtils;
 import dev.rosewood.rosegarden.utils.NMSUtil;
@@ -23,15 +21,14 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class MineUtils {
 
-    private static final Cache<Material, BlockData> blockDataCache = CacheBuilder.newBuilder()
-            .expireAfterWrite(3, TimeUnit.MINUTES)
-            .build();
+    private static final Map<Material, BlockData> blockDataCache = new HashMap<>();
 
     private MineUtils() {
         throw new IllegalStateException("Utility class");
@@ -47,12 +44,8 @@ public class MineUtils {
         // Don't change the block if it's already the same material!!
         if (block.getType() == material) return;
 
-        try {
-            BlockData data = blockDataCache.get(material, material::createBlockData);
-            block.setBlockData(data, false);
-        } catch (ExecutionException e) {
-            block.setType(material);
-        }
+        BlockData data = blockDataCache.computeIfAbsent(material, Material::createBlockData);
+        block.setBlockData(data, false);
     }
 
     /**
